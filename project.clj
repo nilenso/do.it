@@ -23,6 +23,7 @@
                  [ring "1.5.0"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-json "0.4.0"]
+                 [ring-cors "0.1.12"]
                  [yesql "0.5.3"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]

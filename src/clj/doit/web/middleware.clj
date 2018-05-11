@@ -58,11 +58,3 @@
                                   :request loggable-request}))
                 web-util/error-bad-request)
             (throw ex)))))))
-
-
-(defn add-cors-header
-  [handler]
-  (fn [request]
-    (let [request (res/update-header request
-                                     "Access-Control-Allow-Origin" (constantly "*"))]
-      (handler request))))
