@@ -6,6 +6,7 @@
                  [org.clojure/clojurescript "1.9.908"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.5"]
+                 [re-frame-datatable "0.6.0"]
                  [day8.re-frame/http-fx "0.1.6"]
                  [bidi "2.0.11"]
                  [cheshire "5.6.3"]
