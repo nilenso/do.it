@@ -1,0 +1,5 @@
+CREATE TABLE todo (
+    id SERIAL PRIMARY KEY,
+    body TEXT,
+    done BOOLEAN DEFAULT FALSE
+);

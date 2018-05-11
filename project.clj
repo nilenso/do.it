@@ -44,7 +44,6 @@
                           ["clean"]
                           ["cljsbuild" "once" "min"]]}
   :main ^:skip-aot doit.core
-;  :plugins [[lein-environ "1.1.0"]]
   :profiles
   {:default [:base :system :user :provided :dev :dev-environ]
    :uberjar {:aot :all}
@@ -65,8 +64,8 @@
   {:builds
    [{:id           "dev"
      :source-paths ["src/cljs"]
-     :figwheel     {:on-jsload "doit.core/mount-root"}
-     :compiler     {:main                 doit.core
+     :figwheel     {:on-jsload "doit-web.core/mount-root"}
+     :compiler     {:main                 doit-web.core
                     :output-to            "resources/public/js/compiled/app.js"
                     :output-dir           "resources/public/js/compiled/out"
                     :asset-path           "js/compiled/out"
@@ -80,7 +79,7 @@
 
     {:id           "min"
      :source-paths ["src/cljs"]
-     :compiler     {:main            doit.core
+     :compiler     {:main            doit-web.core
                     :output-to       "resources/public/js/compiled/app.js"
                     :optimizations   :advanced
                     :closure-defines {goog.DEBUG false}
@@ -88,7 +87,7 @@
 
     {:id           "test"
      :source-paths ["src/cljs" "test/cljs"]
-     :compiler     {:main          doit.runner
+     :compiler     {:main          doit-web.runner
                     :output-to     "resources/public/js/compiled/test.js"
                     :output-dir    "resources/public/js/compiled/test/out"
                     :optimizations :none}}
