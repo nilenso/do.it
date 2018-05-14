@@ -1,8 +1,10 @@
 (defproject doit "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"]
+                 [ragtime "0.7.2"]
                  [reagent "0.7.0"]
-                 [re-frame "0.10.5"]]
+                 [re-frame "0.10.5"]
+                 [org.postgresql/postgresql "42.2.2"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
 
@@ -21,8 +23,9 @@
                         ["pdo" ["figwheel" "dev"]]]
             "build" ["with-profile" "+prod,-dev" "do"
                           ["clean"]
-                          ["cljsbuild" "once" "min"]]}
-
+                     ["cljsbuild" "once" "min"]]
+            "migrate" ["run" "-m" "doit.db/migrate"]
+            "rollback" ["run" "-m" "doit.db/rollback"]}
   :profiles
   {:dev
    {:dependencies [[binaryage/devtools "0.9.4"]
