@@ -26,7 +26,7 @@
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.12"]
                  [yesql "0.5.3"]]
-
+  :target-path "target/%s"
   :plugins [[lein-cljsbuild "1.1.5"]]
 
   :min-lein-version "2.5.3"
@@ -40,11 +40,14 @@
 
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
-  :aliases {"dev" ["do" "clean"
+  :aliases {"dev"      ["do" "clean"
                         ["pdo" ["figwheel" "dev"]]]
-            "build" ["with-profile" "+prod,-dev" "do"
-                          ["clean"]
-                          ["cljsbuild" "once" "min"]]}
+            "build"    ["with-profile" "+prod,-dev" "do"
+                        ["clean"]
+                        ["cljsbuild" "once" "min"]]
+            "test"     ["with-profile" "+test-environ" "test"]
+            "migrate"  ["run" "-m" "doit.migration/lein-migrate-db"]
+            "rollback" ["run" "-m" "doit.migration/lein-rollback-db"]}
   :main ^:skip-aot doit.core
   :profiles
   {:default [:base :system :user :provided :dev :dev-environ]
@@ -56,12 +59,12 @@
                    [figwheel-sidecar "0.5.13"]
                    [com.cemerick/piggieback "0.2.2"]]
 
-    :plugins      [[lein-figwheel "0.5.13"]
-                   [lein-doo "0.1.8"]
-                   [lein-pdo "0.1.1"]
-                   [lein-environ "1.1.0"]]}
+    :plugins [[lein-figwheel "0.5.13"]
+              [lein-doo "0.1.8"]
+              [lein-pdo "0.1.1"]
+              [lein-environ "1.1.0"]]}
    :prod { :dependencies [[day8.re-frame/tracing-stubs "0.5.0"]]}}
-
+  :test-paths ["test/clj"]
   :cljsbuild
   {:builds
    [{:id           "dev"
@@ -74,7 +77,7 @@
                     :source-map-timestamp true
                     :preloads             [devtools.preload
                                            day8.re-frame-10x.preload]
-                    :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true
+                    :closure-defines      {"re_frame.trace.trace_enabled_QMARK_"        true
                                            "day8.re_frame.tracing.trace_enabled_QMARK_" true}
                     :external-config      {:devtools/config {:features-to-install :all}}
                     }}
@@ -93,6 +96,4 @@
                     :output-to     "resources/public/js/compiled/test.js"
                     :output-dir    "resources/public/js/compiled/test/out"
                     :optimizations :none}}
-    ]}
-
-  )
+    ]})
