@@ -84,13 +84,14 @@ able to justify it. Rather than being exhaustive, I am trying to
 - Why `org-mode`? Because I am on emacs, and it is the markup language to go for emacs users. It is standarized and is more powerful than markdown. Reference: http://karl-voit.at/2017/09/23/orgmode-as-markup-only/
 
 - Why `markdown`? Because I have been using it for quite long and it is more popular. Otherwise the syntax for both is quite similar and github renders both of them.
+
 ### Configuration Management
 
 **Decision:** juxt/aero
 
 **Contenders:** [juxt/aero](https://github.com/juxt/aero), [yogthos/config](https://github.com/yogthos/config), [environ](https://github.com/weavejester/environ)
 
-- Out of all three, aero provides nested configs and parsing of config variables. With aero we don't need to seperate config files for different pofiles and can have parts of config conditional on lein profile.
+- Out of all three, only aero provides nested configs, parsing of config variables. With aero we don't need to seperate config files for different profiles and can have parts of config conditional on lein profile. Aero also allows us to use files for passwords instead of using enviornment variables.
 
 
 ---

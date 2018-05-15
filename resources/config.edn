@@ -7,7 +7,7 @@
                   :prod #long #or [#env HTTP_PORT 4000]}}
 
  :db
- {:name #profile {:default "doit"
+ {:dbname #profile {:default "doit"
                   :test "doit_test"
                   :prod #ref [:secrets :db :name]}
   :dbtype "postgresql"
