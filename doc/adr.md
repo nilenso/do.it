@@ -56,14 +56,14 @@ able to justify it. Rather than being exhaustive, I am trying to
     across.
 
 -   Apparently it is better than other relational databases, see
-     [[https://di.nmfay.com/postgres-vs-mysql]{.underline}](https://di.nmfay.com/postgres-vs-mysql)
+     [https://di.nmfay.com/postgres-vs-mysql](https://di.nmfay.com/postgres-vs-mysql)
      (I'm yet to read the article)
 
 ### **Migration Library:** Ragtime
 
 -   Major contenders for the migration library were
-     [[ragtime]{.underline}](https://github.com/weavejester/ragtime)
-     and [[migratus]{.underline}](https://github.com/yogthos/migratus),
+     [ragtime](https://github.com/weavejester/ragtime)
+     and [migratus](https://github.com/yogthos/migratus),
      they are quite similar except that in ragtime you specify
      migration as
      \`\<migration\_number\-\<migration\_name\>.{up,down}.sql\`
@@ -75,7 +75,17 @@ able to justify it. Rather than being exhaustive, I am trying to
      ragtime.
 
 -   Reference:
-     [[https://adambard.com/blog/clojure-migration-libraries/]{.underline}](https://adambard.com/blog/clojure-migration-libraries/)
+     [https://adambard.com/blog/clojure-migration-libraries/](https://adambard.com/blog/clojure-migration-libraries/)
+
+### Plaintext Markup Format
+
+**Decision:** Markdown
+
+- Why `org-mode`? Because I am on emacs, and it is the markup language to go for emacs users. It is standarized and is more powerful than markdown. Reference: http://karl-voit.at/2017/09/23/orgmode-as-markup-only/
+
+- Why `markdown`? Because I have been using it for quite long and it is more popular. Otherwise the syntax for both is quite similar and github renders both of them.
+### Configuration Management
+
 
 ---
 
