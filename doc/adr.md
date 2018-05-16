@@ -107,6 +107,35 @@ http-kit and clj-http looks equivalent, found no strong reason to prefer one ove
 
 ring jetty adapter and http-kit looks equivalent and have similar api, going for http-kit because then I also use that as an http-client.
 
+### Testing framework
+
+**Decision:** clojure.test
+
+**Contenders:** Clojure.test and Midje
+
+- Clojure.test
+  - Official clojure testing framework so it is here to stay
+  - It is quite powerful and I already know how to work with it.
+
+- Midje
+  - Have better test reports
+  - Reloads and reruns tests on files that have changes.
+  - Uses unidomatic `=>` function for tests.
+  - Apparently is not suited for stateful interactions which will happen because I'm dealing with database changes. See https://www.reddit.com/r/Clojure/comments/1viilt/clojure_testing_tddbdd_libraries_clojuretest_vs/ceu7rhb/ (the comment is 4yr old, take it with a pinch of salt).
+
+- Going with clojure.test because the reasons in favor of midje don't seem to be strong enough.
+
+### Routing Library
+
+**Decision:** bidi
+
+- There are lot of potential choices for a routing library, though only bidi and silk appears to work with both clojure and clojurescript, this is important because our frontend is in clojurescript. Choosing bidi over silk because it has more stars.
+
+- Reference https://github.com/juxt/bidi#comparison-with-other-routing-libraries
+
+
+
+
 
 ---
 
