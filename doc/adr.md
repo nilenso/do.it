@@ -93,6 +93,20 @@ able to justify it. Rather than being exhaustive, I am trying to
 
 - Out of all three, only aero provides nested configs, parsing of config variables. With aero we don't need to seperate config files for different profiles and can have parts of config conditional on lein profile. Aero also allows us to use files for passwords instead of using enviornment variables.
 
+### HTTP Client
+
+**Decision:** http-kit
+
+**Contenders:** http-kit, clj-http
+
+http-kit and clj-http looks equivalent, found no strong reason to prefer one over another. http-kit also comes with a http server, so going with it.
+
+### HTTP Server
+
+**Contenders:** ring jetty adapter, http-kit
+
+ring jetty adapter and http-kit looks equivalent and have similar api, going for http-kit because then I also use that as an http-client.
+
 
 ---
 

@@ -4,12 +4,14 @@
  :webserver
  {:port #profile {:default 4000
                   :test 4001
-                  :prod #long #or [#env HTTP_PORT 4000]}}
+                  :prod #long #or [#env HTTP_PORT 4000]}
+  :host #profile {:default "localhost"
+                  :prod #ref [:secrets :host]}}
 
  :db
  {:dbname #profile {:default "doit"
-                  :test "doit_test"
-                  :prod #ref [:secrets :db :name]}
+                    :test "doit_test"
+                    :prod #ref [:secrets :db :name]}
   :dbtype "postgresql"
   :host #profile {:default "localhost"
                   :prod #ref [:secrets :db :host]}

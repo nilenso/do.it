@@ -5,9 +5,15 @@
                  [ragtime "0.7.2"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.5"]
+;                 [ring/ring-core "1.6.3"]
+;                 [ring/ring-jetty-adapter "1.6.3"]
+                 [http-kit "2.2.0"]
+                 [clj-http "3.9.0"]
                  [org.postgresql/postgresql "42.2.2"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
+
+  :test-paths ["test/clj"]
 
   :min-lein-version "2.5.3"
 
