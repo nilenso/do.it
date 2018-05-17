@@ -3,6 +3,7 @@
                  [bidi "2.1.3"]
                  [http-kit "2.2.0"]
                  [org.clojure/clojure "1.9.0"]
+                 [org.clojure/java.jdbc "0.7.6"]
                  [org.clojure/clojurescript "1.9.908"]
                  [org.postgresql/postgresql "42.2.2"]
                  [ragtime "0.7.2"]
