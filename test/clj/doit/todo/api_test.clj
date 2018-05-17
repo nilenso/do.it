@@ -10,12 +10,16 @@
 
 (t/deftest test-create-todo-api
   (t/testing "user can create a todo"
-    (let [{:keys [status]} @(http/post
-                             todo-api-end-point
-                             {:header "Content-Type: application/json"
-                              :body   (json/write-str
-                                       {:content "Test Todo"})})]
-      (t/is (= status 201)))))
+    (let [test-content "Test Todo"
+          {:keys [status body]} @(http/post
+                                  todo-api-end-point
+                                  {:header "Content-Type: application/json"
+                                   :body   (json/write-str
+                                            {:content test-content})})
+          parsed-body (clojure.walk/keywordize-keys (json/read-str body))]
+      (t/is (= status 201))
+      (t/is (= (set (keys parsed-body)) #{:content :id}))
+      (t/is (= (:content parsed-body) test-content)))))
 
 (t/deftest test-create-todo-bad-request
   (t/testing "returns error on bad request"
@@ -28,9 +32,9 @@
 
 (t/deftest test-retrieve-todo-api
   (t/testing "user can retrieve list of todos"
-      (let [{:keys [status body]} @(http/get
-                                    todo-api-end-point
-                                    {:header "Content-Type: application/json"
-                                     :body   (json/write-str
-                                              {:content "Test Todo"})})]
-        (t/is (= status 200)))))
+    (let [{:keys [status body]} @(http/get
+                                  todo-api-end-point
+                                  {:header "Content-Type: application/json"
+                                   :body   (json/write-str
+                                            {:content "Test Todo"})})]
+      (t/is (= status 200)))))

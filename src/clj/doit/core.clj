@@ -2,7 +2,6 @@
   (:require [org.httpkit.server :as httpkit]
             [doit.config :as config]
             [doit.route :refer [route]]
-            [bidi.bidi :as bidi]
             [bidi.ring :refer [make-handler]]))
 
 (defonce server (atom nil))
