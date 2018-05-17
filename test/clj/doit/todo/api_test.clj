@@ -1,4 +1,4 @@
-(ns doit.test-api
+(ns doit.todo.api-test
   (:require  [clojure.test :as t]
              [doit.fixtures :as fixtures]
              [org.httpkit.client :as http]
@@ -14,7 +14,7 @@
                              todo-api-end-point
                              {:header "Content-Type: application/json"
                               :body   (json/write-str
-                                       {:body "Test Todo"})})]
+                                       {:content "Test Todo"})})]
       (t/is (= status 201)))))
 
 (t/deftest test-create-todo-bad-request
@@ -32,5 +32,5 @@
                                     todo-api-end-point
                                     {:header "Content-Type: application/json"
                                      :body   (json/write-str
-                                              {:body "Test Todo"})})]
+                                              {:content "Test Todo"})})]
         (t/is (= status 200)))))
