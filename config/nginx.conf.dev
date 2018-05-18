@@ -1,0 +1,44 @@
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    keepalive_timeout  65;
+
+    server {
+        listen       5000;
+        server_name  localhost;
+
+         location /api/ {
+                 # Proxy to backend
+                 proxy_pass http://127.0.0.1:4000;
+         }
+
+         location /js/ {
+                 proxy_pass http://127.0.0.1:3449;
+         }
+
+         location /css/ {
+                 proxy_pass http://127.0.0.1:3449;
+         }
+
+         location / {
+                 # Serve the contents of index.html, no matter what the URL
+                 proxy_pass http://127.0.0.1:3449;
+                 try_files $uri /index.html;
+         }
+
+        location = /50x.html {
+            root   html;
+        }
+
+    }
+
+    include servers/*;
+}

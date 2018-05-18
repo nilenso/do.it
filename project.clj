@@ -6,6 +6,7 @@
                  [org.clojure/java.jdbc "0.7.6"]
                  [org.clojure/clojurescript "1.9.908"]
                  [org.postgresql/postgresql "42.2.2"]
+                 [day8.re-frame/http-fx "0.1.6"]
                  [ragtime "0.7.2"]
                  [re-frame "0.10.5"]
                  [reagent "0.7.0"]]
