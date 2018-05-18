@@ -6,7 +6,9 @@
              [doit.config :as config]))
 
 (def todo-api-end-point (str config/api-end-point "todo/"))
-(t/use-fixtures :once fixtures/start-stop-server)
+(t/use-fixtures :once fixtures/start-stop-server fixtures/migrate-destroy-db)
+(t/use-fixtures :each fixtures/isolate-db)
+
 
 (t/deftest test-create-todo-api
   (t/testing "user can create a todo"
