@@ -1,6 +1,8 @@
-# doit
+# Do.It
 
-A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, that part is up to you.
+do.it is a collaborative todo app written in clojure and clojurescript with re-frame as the frontend framework.
+
+
 
 ## Development Mode
 
@@ -17,10 +19,22 @@ Put this in your Emacs config file:
 
 Navigate to a clojurescript file and start a figwheel REPL with `cider-jack-in-clojurescript` or (`C-c M-J`)
 
-### Run application:
+### Configure nginx
+
+You need to configure nginx so that the backend and frontend can run on the same port. See `config/nginx.conf.dev`
+
+### Run backend:
 
 ```
-lein dev
+lein run
+```
+
+This will start the server on port `4000`
+
+### Run frontend
+
+```
+lein figwheel
 ```
 
 Figwheel will automatically push cljs changes to the browser.
@@ -29,6 +43,13 @@ Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
 
 ### Run tests:
 
+#### Backend
+
+```
+PROFILE=test lein test
+```
+
+#### Frontend
 ```
 lein clean
 lein doo phantom test once
