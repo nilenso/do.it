@@ -6,7 +6,7 @@
 
 (defn header []
   [:div.header
-   [:h2 "DO•IT"]])
+   [:h1 "DO•IT"]])
 
 (defn add-todo-form []
   (let [content (reagent/atom "")]
@@ -27,15 +27,17 @@
   (let [todos (rf/subscribe [::subs/todos])]
     (fn []
       [:div.todos-panel
+       [:h3 {:style {:text-align "center"}} "Things to do"]
        (for [todo @todos]
          [:div.todo-item
-          "☐"
+          "☐ "
           (:content todo)])])))
 
 (defn main-panel []
-  [:div
+  [:div.page
    [header]
    [add-todo-form]
    [:br]
    [:hr]
+
    [todos-panel]])
