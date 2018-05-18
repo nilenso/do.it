@@ -30,6 +30,7 @@
                         json/write-str)))))
 
 (defn list-todos [request]
-  {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    "trying to list todos but can't"})
+  (let [todos (todo-db/list-todos)]
+    {:status  200
+     :headers {"Content-Type" "application/json"}
+     :body    (json/write-str (map #(select-keys % [:content :id]) todos))}))
