@@ -18,6 +18,8 @@
 
   :source-paths ["src/clj"]
 
+  :main ^:skip-aot doit.core
+
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
 
