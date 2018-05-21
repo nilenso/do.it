@@ -13,10 +13,13 @@
    (print "Request failed with response" err)
    db))
 
+(defn get-todo-success
+  [db [_ todos]]
+  (assoc db :todos todos))
+
 (rf/reg-event-db
  ::get-todos-success
- (fn [db [_ todos]]
-   (assoc db :todos todos)))
+ get-todo-success)
 
 (rf/reg-event-fx
  ::add-todo

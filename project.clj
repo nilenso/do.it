@@ -4,7 +4,7 @@
                  [http-kit "2.2.0"]
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/java.jdbc "0.7.6"]
-                 [org.clojure/clojurescript "1.9.908"]
+                 [org.clojure/clojurescript "1.9.946"]
                  [org.postgresql/postgresql "42.2.2"]
                  [day8.re-frame/http-fx "0.1.6"]
                  [ragtime "0.7.2"]
@@ -19,7 +19,7 @@
 
   :source-paths ["src/clj"]
 
-  :main ^:skip-aot doit.core
+  :main doit.core
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
