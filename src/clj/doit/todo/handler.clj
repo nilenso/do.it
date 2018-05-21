@@ -6,7 +6,7 @@
    [clojure.spec.alpha :as s]))
 
 (defn parse-body [req-body]
-  (clojure.walk/keywordize-keys (json/read-str (slurp (.bytes req-body)))))
+  (json/read-str (slurp (.bytes req-body)) :key-fn keyword))
 
 (defn response-400 [err]
   {:status  400

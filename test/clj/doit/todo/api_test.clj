@@ -16,7 +16,7 @@
     :body   (json/write-str body)}))
 
 (defn parse-body [body]
-  (clojure.walk/keywordize-keys (json/read-str body)))
+  (json/read-str body :key-fn keyword))
 
 (t/deftest test-create-todo-api
   (t/testing "user can create a todo"
