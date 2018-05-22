@@ -3,7 +3,8 @@
             [re-frame.core :as re-frame]
             [doit.events :as events]
             [doit.views :as views]
-            [doit.config :as config]))
+            [doit.config :as config]
+            [doit.ws :as ws]))
 
 
 (defn dev-setup []
@@ -19,4 +20,5 @@
 (defn ^:export init []
   (re-frame/dispatch-sync [::events/get-todos])
   (dev-setup)
-  (mount-root))
+  (mount-root)
+  (ws/create-ws-connection))

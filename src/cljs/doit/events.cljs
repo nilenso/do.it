@@ -1,9 +1,12 @@
 (ns doit.events
   (:require [re-frame.core :as rf]
             [doit.db :as db]
+            [doit.ws :as ws]
             [day8.re-frame.http-fx]
             [ajax.core :as ajax]
-            [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
+            [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]
+            [wscljs.client :as ws-client]
+            [wscljs.format :as fmt]))
 
 (def todo-url "/api/todo/")
 
@@ -22,16 +25,10 @@
  get-todo-success)
 
 (rf/reg-event-fx
- ::add-todo
+ ::trigger-add-todo
  (fn [cofx [_ vals]]
-   {:http-xhrio {:method :post
-                 :uri todo-url
-                 :params vals
-                 :timeout         8000
-                 :format          (ajax/json-request-format)
-                 :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success [::get-todos]
-                 :on-failure [::request-failed]}}))
+   {:ws-send {:command "add"
+              :data vals}}))
 
 (rf/reg-event-fx
  ::get-todos
@@ -49,3 +46,8 @@
  ::initialize-db
  (fn-traced [_ _]
    db/default-db))
+
+(rf/reg-fx
+ :ws-send
+ (fn [data]
+   (ws-client/send @ws/socket data fmt/json)))

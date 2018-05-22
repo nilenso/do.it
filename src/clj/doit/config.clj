@@ -10,8 +10,14 @@
 
 (def webserver (get config :webserver))
 
-(def api-end-point (str "http://"
+(def rest-api-end-point (str "http://"
                         (:host webserver)
                         ":"
                         (:port webserver)
                         "/api/"))
+
+(def ws-end-point (str "ws://"
+                        (:host webserver)
+                        ":"
+                        (:port webserver)
+                        "/api/todo/ws"))

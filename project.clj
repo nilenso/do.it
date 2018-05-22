@@ -9,7 +9,9 @@
                  [day8.re-frame/http-fx "0.1.6"]
                  [ragtime "0.7.2"]
                  [re-frame "0.10.5"]
-                 [reagent "0.7.0"]]
+                 [reagent "0.7.0"]
+                 [nilenso/wscljs "0.1.2"]
+                 [stylefruits/gniazdo "1.0.1"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
 
