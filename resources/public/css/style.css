@@ -1,0 +1,26 @@
+.page {
+    height: 100%;
+    margin: 5em auto;
+    width: 800px;
+}
+
+.todo-item {
+    color: #484848
+}
+
+h1 {
+    text-align: center;
+    color: #671b96;
+}
+
+hr {
+    color: #D3D3D3
+}
+
+.btn {
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-right: 5px;
+}
