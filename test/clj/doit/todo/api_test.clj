@@ -26,7 +26,7 @@
           {:keys [status body]} (create-todo-api-call {:content test-content})
           parsed-body (parse-body body)]
       (is (= status 201))
-      (is (= (set (keys parsed-body)) #{:content :id}))
+      (is (= (set (keys parsed-body)) #{:content :id :done}))
       (is (= (:content parsed-body) test-content)))))
 
 (deftest test-create-todo-bad-request
@@ -47,4 +47,4 @@
         (is (= (:content (first parsed-body))
                  (:content test-todo1)))
         (is (= (set (keys (first parsed-body)))
-                 #{:content :id}))))))
+                 #{:content :id :done}))))))

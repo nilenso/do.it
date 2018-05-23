@@ -25,3 +25,26 @@
       (is (= (count res) 2))
       (is (= (:content (first res)) (:content test-todo1)))
       (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
+
+(deftest mark-done-query-test
+  (testing "User can mark a todo as done"
+    (let [test-todo {:content "test todo"}
+          added-todo-id (:id (first (todo-db/add-todo! test-todo)))
+          _ (todo-db/mark-done! added-todo-id)
+          res (todo-db/list-todos)]
+      (is (= (count res) 1))
+            (is (= (:content (first res)) (:content test-todo)))
+      (is (= (:done (first res)) true))
+      (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
+
+(deftest mark-undone-query-test
+  (testing "User can mark a todo as done"
+    (let [test-todo {:content "test todo"}
+          added-todo-id (:id (first (todo-db/add-todo! test-todo)))
+          _ (todo-db/mark-done! added-todo-id)
+          _ (todo-db/mark-undone! added-todo-id)
+          res (todo-db/list-todos)]
+      (is (= (count res) 1))
+            (is (= (:content (first res)) (:content test-todo)))
+      (is (= (:done (first res)) false))
+      (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
