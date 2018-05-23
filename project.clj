@@ -32,9 +32,7 @@
                         ["pdo" ["figwheel" "dev"]]]
             "build" ["with-profile" "+prod,-dev" "do"
                           ["clean"]
-                     ["cljsbuild" "once" "min"]]
-            "migrate" ["run" "-m" "doit.db/migrate"]
-            "rollback" ["run" "-m" "doit.db/rollback"]}
+                     ["cljsbuild" "once" "min"]]}
   :profiles
   {:dev
    {:dependencies [[binaryage/devtools "0.9.4"]

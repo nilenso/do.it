@@ -11,7 +11,7 @@
 (def handler (make-handler route))
 
 (defn start-server! []
-  (let [port (:port config/webserver)]
+  (let [port (:port (config/webserver))]
     (reset! server (httpkit/run-server handler {:port port}))
     (println "Server started at port: " port)))
 
@@ -24,7 +24,7 @@
   (stop-server!)
   (start-server!))
 
-
 (defn -main [& args]
+  (config/load)
   (db/migrate)
   (start-server!))

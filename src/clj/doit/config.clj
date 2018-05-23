@@ -1,17 +1,20 @@
 (ns doit.config
   [:require
-   [aero.core :refer [read-config]]])
+   [aero.core :as aero]
+   [clojure.java.io :as io]])
 
-(def ^:private profile (keyword (System/getenv "PROFILE")))
-(def ^:private config (read-config (clojure.java.io/resource "config.edn")
-                                   {:profile profile}))
+(def ^:private config (atom nil))
 
-(def db (get config :db))
+(defn load []
+  (let [profile (keyword (System/getenv "PROFILE"))]
+    (reset! config (aero/read-config (io/resource "config.edn")
+                                     {:profile profile}))))
+(defn db []
+  (get @config :db))
 
-(def webserver (get config :webserver))
+(defn webserver []
+  (get @config :webserver))
 
-(def api-end-point (str "http://"
-                        (:host webserver)
-                        ":"
-                        (:port webserver)
-                        "/api/"))
+(defn api-end-point []
+  (let [{:keys [host port]} (webserver)]
+    (format "http://%s:%s/api/" host port)))
