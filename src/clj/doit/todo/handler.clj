@@ -6,31 +6,43 @@
    [clojure.spec.alpha :as s]))
 
 (defn parse-body [req-body]
-  (json/read-str (slurp (.bytes req-body)) :key-fn keyword))
+  (-> req-body
+      (.bytes)
+      (slurp)
+      (json/read-str :key-fn keyword)))
 
-(defn response-400 [err]
-  {:status  400
+(defn wrap-response [json-body status]
+  {:status status
    :headers {"Content-Type" "application/json"}
-   :body    err})
-
-(defn response-201 [body]
-  {:status  201
-   :headers {"Content-Type" "application/json"}
-   :body    body})
+   :body (json/write-str json-body)})
 
 (defn create-todo [request]
   (let [body   (parse-body (:body request))
         parsed-body (s/conform ::spec/todo-in body)]
     (if (= parsed-body ::s/invalid)
-      (response-400 (s/explain-str ::spec/todo-in body))
-      (response-201 (-> parsed-body
-                        todo-db/add-todo!
-                        first
-                        (select-keys [:content :id])
-                        json/write-str)))))
+      (wrap-response {:error (s/explain-str ::spec/todo-in body)} 400)
+      (-> parsed-body
+          todo-db/add-todo!
+          first
+          (select-keys [:content :id :done])
+          (wrap-response 201)))))
 
 (defn list-todos [request]
   (let [todos (todo-db/list-todos)]
-    {:status  200
-     :headers {"Content-Type" "application/json"}
-     :body    (json/write-str (map #(select-keys % [:content :id]) todos))}))
+    (wrap-response
+     (map #(select-keys % [:content :id :done]) todos)
+     200)))
+
+(defn mark-done [request]
+  (let [id (get-in request [:route-params :id])
+        res (-> id (Integer.) todo-db/mark-done! first)]
+    (if res
+      (wrap-response (select-keys res [:content :id :done]) 200)
+      (wrap-response {:error (format "todo with id %s not found" id)} 404))))
+
+(defn mark-undone [request]
+  (let [id (get-in request [:route-params :id])
+        res (-> id (Integer.) todo-db/mark-undone! first)]
+    (if res
+      (wrap-response (select-keys res [:content :id :done]) 200)
+      (wrap-response {:error (format "todo with id %s not found" id)} 404))))
