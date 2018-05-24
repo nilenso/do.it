@@ -25,6 +25,6 @@
   (start-server!))
 
 (defn -main [& args]
-  (config/load)
+  (config/load-config)
   (db/migrate)
   (start-server!))

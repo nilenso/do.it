@@ -5,7 +5,7 @@
             [doit.config :as config]))
 
 (defn load-config [f]
-  (config/load)
+  (config/load-config :test)
   (f))
 
 (defn start-stop-server [f]

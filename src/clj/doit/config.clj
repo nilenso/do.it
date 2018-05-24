@@ -5,10 +5,12 @@
 
 (def ^:private config (atom nil))
 
-(defn load []
-  (let [profile (keyword (System/getenv "PROFILE"))]
-    (reset! config (aero/read-config (io/resource "config.edn")
-                                     {:profile profile}))))
+(defn load-config
+  ([]
+   (load-config (keyword (System/getenv "PROFILE"))))
+  ([profile]
+   (reset! config (aero/read-config (io/resource "config.edn")
+                                    {:profile profile}))))
 (defn db []
   (get @config :db))
 
