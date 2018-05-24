@@ -1,0 +1,14 @@
+[Unit]
+Description=Deamon for doit backend
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/java -jar /home/enso/doit/doit.jar
+Environment=PROFILE=prod
+Environment=HOME=/home/enso
+Restart=always
+RestartSec=3
+WorkingDirectory=/home/enso/doit
+
+[Install]
+WantedBy=multi-user.target
