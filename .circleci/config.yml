@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/doit
+    docker:
+      - image: circleci/clojure:lein-2.8.1
+      - image: postgres:9.4.1
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: doit
+    environment:
+      JVM_OPTS: -Xmx3200m
+      LEIN_ROOT: nbd
+      USER: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: doit-{{ checksum "project.clj" }}
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.lein
+          key: doit-{{ checksum "project.clj"}}
+      - run: lein test
