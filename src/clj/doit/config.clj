@@ -16,7 +16,3 @@
 
 (defn webserver []
   (get @config :webserver))
-
-(defn api-end-point []
-  (let [{:keys [host port]} (webserver)]
-    (format "http://%s:%s/api/" host port)))

@@ -10,7 +10,8 @@
 (use-fixtures :each fixtures/isolate-db)
 
 (defn todo-api-end-point []
-  (str (config/api-end-point) "todo/"))
+  (let [{:keys [host port]} (config/webserver)]
+    (format "http://%s:%s/api/todo/" host port)))
 
 (defn post-api-call [url body]
   @(http/post
