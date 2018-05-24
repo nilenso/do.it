@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/doit
     docker:
-      - image: circleci/clojure:lein-2.8.1
+      - image: circleci/clojure:lein-2.8.1-browsers
       - image: postgres:9.4.1
         environment:
           POSTGRES_USER: root
