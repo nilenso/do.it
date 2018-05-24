@@ -8,7 +8,9 @@
 
 (s/def ::done boolean?)
 
-(s/def ::todo-in (s/keys :req-un [::content]))
+(s/def ::create-params (s/keys :req-un [::content]))
+
+(s/def ::update-params (s/keys :req-un [::content ::done]))
 
 (s/def ::todo-out (s/keys :req-un [::content ::id ::done]))
 

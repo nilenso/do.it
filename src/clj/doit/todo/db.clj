@@ -7,14 +7,10 @@
   (-> (jdbc/insert! (config/db) :todo values)
       first))
 
-
-(defn mark-done!
-  [id]
-  (jdbc/query (config/db) ["UPDATE todo SET done='true' WHERE id = ? RETURNING *" id]))
-
-(defn mark-undone!
-  [id]
-  (jdbc/query (config/db) ["UPDATE todo SET done='false' WHERE id = ? RETURNING *" id]))
+(defn update-todo!
+  [todo]
+  (jdbc/update! (config/db) :todo todo ["id = ?" (:id todo)])
+  todo)
 
 (defn retrieve-todo
   [id]

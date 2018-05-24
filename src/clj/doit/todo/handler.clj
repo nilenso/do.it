@@ -11,37 +11,38 @@
       (slurp)
       (json/read-str :key-fn keyword)))
 
-(defn wrap-response [json-body status]
+(defn wrap-response [data status]
   {:status status
    :headers {"Content-Type" "application/json"}
-   :body (json/write-str json-body)})
+   :body (json/write-str data)})
 
 (defn create-todo [request]
   (let [body   (parse-body (:body request))
-        parsed-body (s/conform ::spec/todo-in body)]
+        parsed-body (s/conform ::spec/create-params body)]
     (if (= parsed-body ::s/invalid)
-      (wrap-response {:error (s/explain-str ::spec/todo-in body)} 400)
+      (wrap-response {:error (s/explain-str ::spec/create-params body)} 400)
       (-> parsed-body
           todo-db/add-todo!
           (select-keys [:content :id :done])
           (wrap-response 201)))))
+
+(defn update-todo [request]
+  (let [body (parse-body (:body request))
+        parsed-body (s/conform ::spec/update-params body)
+        id (Integer. (get-in request [:route-params :id]))
+        todo (todo-db/retrieve-todo id)
+        updated-todo (select-keys (merge todo parsed-body) [:content :id :done])]
+    (if-not todo
+      (wrap-response {:error (format "todo with id %s not found" id)} 404)
+      (if (= parsed-body ::s/invalid)
+        (wrap-response {:error (s/explain-str ::spec/update-params body)} 400)
+        (-> updated-todo
+            todo-db/update-todo!
+            (select-keys [:content :id :done])
+            (wrap-response 200))))))
 
 (defn list-todos [request]
   (let [todos (todo-db/list-todos)]
     (wrap-response
      (map #(select-keys % [:content :id :done]) todos)
      200)))
-
-(defn mark-done [request]
-  (let [id (get-in request [:route-params :id])
-        res (-> id (Integer.) todo-db/mark-done! first)]
-    (if res
-      (wrap-response (select-keys res [:content :id :done]) 200)
-      (wrap-response {:error (format "todo with id %s not found" id)} 404))))
-
-(defn mark-undone [request]
-  (let [id (get-in request [:route-params :id])
-        res (-> id (Integer.) todo-db/mark-undone! first)]
-    (if res
-      (wrap-response (select-keys res [:content :id :done]) 200)
-      (wrap-response {:error (format "todo with id %s not found" id)} 404))))

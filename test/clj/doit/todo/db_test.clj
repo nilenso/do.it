@@ -25,25 +25,11 @@
       (is (= (:content (first res)) (:content test-todo1)))
       (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
 
-(deftest mark-done-query-test
-  (testing "User can mark a todo as done"
-    (let [test-todo {:content "test todo"}
-          added-todo-id (:id (todo-db/add-todo! test-todo))
-          _ (todo-db/mark-done! added-todo-id)
-          res (todo-db/list-todos)]
-      (is (= (count res) 1))
-            (is (= (:content (first res)) (:content test-todo)))
-      (is (= (:done (first res)) true))
-      (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
-
-(deftest mark-undone-query-test
-  (testing "User can mark a todo as done"
-    (let [test-todo {:content "test todo"}
-          added-todo-id (:id (first (todo-db/add-todo! test-todo)))
-          _ (todo-db/mark-done! added-todo-id)
-          _ (todo-db/mark-undone! added-todo-id)
-          res (todo-db/list-todos)]
-      (is (= (count res) 1))
-            (is (= (:content (first res)) (:content test-todo)))
-      (is (= (:done (first res)) false))
-      (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
+(deftest update-todo-query-test
+  (testing "User can update a todo"
+    (let [params {:content "test todo"}
+          todo (todo-db/add-todo! params)
+          updated-params {:content "new todo" :done true :id (:id todo)}
+          response (todo-db/update-todo! updated-params)]
+      (is (= updated-params
+             (select-keys response (keys updated-params)))))))
