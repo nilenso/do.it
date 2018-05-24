@@ -53,7 +53,7 @@
 (deftest test-mark-done-todo-api
   (testing "user can mark a todo as done"
     (let [test-todo             {:content "test todo"}
-          {:keys [id]}          (first (todo-db/add-todo! test-todo))
+          {:keys [id]}          (todo-db/add-todo! test-todo)
           url                   (format "%s%s/mark_done/" (todo-api-end-point) id)
           {:keys [status body]} @(http/post url)]
       (is (= status 200))
@@ -73,7 +73,7 @@
 (deftest test-mark-undone-todo-api
   (testing "user can unmark a marked todo as notdone"
     (let [test-todo             {:content "test todo"}
-          {:keys [id]}          (first (todo-db/add-todo! test-todo))
+          {:keys [id]}          (todo-db/add-todo! test-todo)
           _                     (todo-db/mark-done! (Integer. id))
           url                   (format "%s%s/mark_undone/" (todo-api-end-point) id)
           {:keys [status body]} @(http/post url)]

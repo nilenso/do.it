@@ -8,12 +8,11 @@
 
 (deftest add-todo-query-test
   (testing "User can add a todo to db"
-    (let [vals {:content "test todo"}
-          res (todo-db/add-todo! vals)]
-      (is (= (count res) 1))
-      (is (= (:content (first res)) (:content vals)))
-      (is (= (:done (first res)) false))
-      (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
+    (let [params {:content "test todo"}
+          response (todo-db/add-todo! params)]
+      (is (= (:content response) (:content params)))
+      (is (= (:done response) false))
+      (is (= (set (keys response)) #{:content :id :created_at :done})))))
 
 (deftest list-todos-query-test
   (testing "User can list the todos"
@@ -29,7 +28,7 @@
 (deftest mark-done-query-test
   (testing "User can mark a todo as done"
     (let [test-todo {:content "test todo"}
-          added-todo-id (:id (first (todo-db/add-todo! test-todo)))
+          added-todo-id (:id (todo-db/add-todo! test-todo))
           _ (todo-db/mark-done! added-todo-id)
           res (todo-db/list-todos)]
       (is (= (count res) 1))

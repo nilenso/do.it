@@ -23,7 +23,6 @@
       (wrap-response {:error (s/explain-str ::spec/todo-in body)} 400)
       (-> parsed-body
           todo-db/add-todo!
-          first
           (select-keys [:content :id :done])
           (wrap-response 201)))))
 

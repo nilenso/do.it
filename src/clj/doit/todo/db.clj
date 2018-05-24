@@ -4,7 +4,9 @@
 
 (defn add-todo!
   [values]
-  (jdbc/insert! (config/db) :todo values))
+  (-> (jdbc/insert! (config/db) :todo values)
+      first))
+
 
 (defn mark-done!
   [id]
