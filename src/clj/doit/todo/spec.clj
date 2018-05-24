@@ -1,7 +1,6 @@
 (ns doit.todo.spec
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.test.alpha :as stest]
-            [doit.todo.api :as api]))
+            [clojure.spec.test.alpha :as stest]))
 
 (s/def ::content string?)
 
