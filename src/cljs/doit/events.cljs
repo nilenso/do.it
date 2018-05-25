@@ -40,6 +40,24 @@
  [db-spec-inspector]
  get-todo-success)
 
+(defn add-todo-success
+  [db [_ todo]]
+  (assoc-in db [:todos (:id todo)] todo))
+
+(rf/reg-event-db
+ ::add-todo-success
+ [db-spec-inspector]
+ add-todo-success)
+
+(defn update-todo-success
+  [db [_ todo]]
+  (assoc-in db [:todos (:id todo)] todo))
+
+(rf/reg-event-db
+ ::update-todo-success
+ [db-spec-inspector]
+ update-todo-success)
+
 (rf/reg-event-fx
  ::add-todo
  (fn [cofx [_ vals]]
@@ -49,7 +67,7 @@
                  :timeout         8000
                  :format          (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success [::get-todos]
+                 :on-success [::add-todo-success]
                  :on-failure [::request-failed]}}))
 
 (rf/reg-event-fx
@@ -63,6 +81,44 @@
                  :on-success [::get-todos-success]
                  :on-failure [::request-failed]}}))
 
+(rf/reg-event-fx
+ ::update-todo
+ (fn [cofx [_ todo]]
+   (let [id (:id todo)
+         url (str todo-url (:id todo) "/")]
+     (prn url)
+     {:http-xhrio {:method          :put
+                   :uri             url
+                   :params          todo
+                   :timeout         8000
+                   :format          (ajax/json-request-format)
+                   :response-format (ajax/json-response-format {:keywords? true})
+                   :on-success      [::update-todo-success]
+                   :on-failure      [::request-failed]}})))
+
+(defn mark-done
+  [cofx [_ id]]
+  (let [db          (:db cofx)
+        todo        (get-in db [:todos id])
+        updated-todo (assoc todo :done true)]
+    {:db       (:db cofx)
+     :dispatch [::update-todo updated-todo]}))
+
+(rf/reg-event-fx
+ ::mark-done
+ mark-done)
+
+(defn mark-undone
+  [cofx [_ id]]
+  (let [db          (:db cofx)
+        todo        (get-in db [:todos id])
+        updated-todo (assoc todo :done false)]
+    {:db       (:db cofx)
+     :dispatch [::update-todo updated-todo]}))
+
+(rf/reg-event-fx
+ ::mark-undone
+ mark-undone)
 
 (rf/reg-event-db
  ::initialize-db
