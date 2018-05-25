@@ -27,26 +27,26 @@
     (fn []
       [:div.remaining-todos-panel
        [:h3 {:style {:text-align "center"}} "Tasks to do"]
-       (for [todo @todos]
-         ^{:key (:id todo)}
-         [:div.todo-item
-          [:button {:type "input"
-                    :on-click (fn [args] (rf/dispatch [::events/mark-done (:id todo)]))}
-           "☐ "]
-          (:content todo)])])))
+       [:div.remaining-todos
+        (for [todo @todos]
+          ^{:key (:id todo)}
+          [:div
+           [:i.check-box.far.fa-square
+            {:on-click (fn [args] (rf/dispatch [::events/mark-done (:id todo)]))}]
+           (:content todo)])]])))
 
 (defn completed-todos-panel []
   (let [todos (rf/subscribe [::sub/completed-todos])]
     (fn []
       [:div.completed-todos-panel
        [:h3 {:style {:text-align "center"}} "Tasks completed"]
-       (for [todo @todos]
-         ^{:key (:id todo)}
-         [:div.todo-item
-          [:button {:type "input"
-                    :on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}
-           "☑ "]
-          (:content todo)])])))
+       [:div.completed-todos
+        (for [todo @todos]
+          ^{:key (:id todo)}
+          [:div
+           [:i.check-box.far.fa-check-square
+            {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
+           (:content todo)])]])))
 
 (defn main-panel []
   [:div.page
