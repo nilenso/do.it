@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as re-frame]
             [doit.events :as events]
+            [doit.subs]
             [doit.views :as views]
             [doit.config :as config]))
 
