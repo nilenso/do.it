@@ -4,4 +4,4 @@
 (re-frame/reg-sub
  ::todos
  (fn [db]
-   (:todos db)))
+   (vals (:todos db))))
