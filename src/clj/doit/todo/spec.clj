@@ -10,7 +10,7 @@
 
 (s/def ::create-params (s/keys :req-un [::content]))
 
-(s/def ::update-params (s/keys :req-un [::content ::done]))
+(s/def ::update-params (s/keys :req-un [::content ::done ::id]))
 
 (s/def ::todo-out (s/keys :req-un [::content ::id ::done]))
 

@@ -53,16 +53,26 @@
         (is (= 2 (count (:body list-response))))
         (is (= #{content1 content2}
                (set (map :content (:body list-response)))))))
-    (testing "user can update an added todo"
-      (let [id-1 (get-in todo-response-1 [:body :id])
-            updated-content "new content"
-            update-response (update-todo id-1 {:content updated-content :done true})]
-        (is (= 200 (:status update-response)))
-        (is (= (set (keys (:body update-response))) #{:content :id :done}))
-        (is (= true (get-in update-response [:body :done])))
-        (is (= updated-content (get-in update-response [:body :content])))))))
+
+    (let [id-1 (get-in todo-response-1 [:body :id])]
+      (testing "user can update an added todo"
+        (let [updated-data    {:content "new content" :done true :id id-1}
+              update-response (update-todo id-1 updated-data)]
+          (is (= 200 (:status update-response)))
+          (is (= (set (keys (:body update-response))) #{:content :id :done}))
+          (is (= (:done updated-data) (get-in update-response [:body :done])))
+          (is (= (:content updated-data) (get-in update-response [:body :content])))))
+      (testing "user get bad request error on attempting to update todo with bad data"
+        (let [bad-updated-data {:cont "new content" :done false}
+              {:keys [status]} (update-todo id-1 bad-updated-data)]
+          (is (= 400 status)))))))
 
 (deftest test-create-todo-bad-request
   (testing "user gets error on bad request"
     (let [{:keys [status]} (post-api-call (todo-api-end-point) {:ody "Test Todo"})]
       (is (= status 400)))))
+
+(deftest test-update-non-existant
+  (testing "user cannot update a non existant todo"
+    (let [{:keys [status]} (update-todo 1 {:content "new todo" :done false :id 1})]
+      (is (= 404 status)))))
