@@ -30,9 +30,8 @@
 
 (defn get-todo-success
   [db [_ todos]]
-  (let [todo-id-map (reduce (fn [m t] (assoc m (:id t) t))
-                            {}
-                            todos)]
+  (let [todo-id-map (->> (map (fn [t] [(:id t) t]) todos)
+                         (into {}))]
     (assoc db :todos todo-id-map)))
 
 (rf/reg-event-db
