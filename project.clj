@@ -9,7 +9,8 @@
                  [day8.re-frame/http-fx "0.1.6"]
                  [ragtime "0.7.2"]
                  [re-frame "0.10.5"]
-                 [reagent "0.7.0"]]
+                 [reagent "0.7.0"]
+                 [day8.re-frame/test "0.1.5"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
 
