@@ -4,7 +4,7 @@
 (rf/reg-sub
  ::todos
  (fn [db _]
-   (:todos db)))
+   (vals (:todos db))))
 
 (rf/reg-sub
  ::remaining-todos
@@ -12,7 +12,7 @@
    (rf/subscribe [::todos]))
 
  (fn [todos query-v _]
-   (remove :done (vals todos))))
+   (remove :done todos)))
 
 (rf/reg-sub
  ::completed-todos
@@ -20,4 +20,4 @@
    (rf/subscribe [::todos]))
 
  (fn [todos query-v _]
-   (filter :done (vals todos))))
+   (filter :done todos)))
