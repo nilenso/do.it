@@ -16,15 +16,24 @@
    :headers {"Content-Type" "application/json"}
    :body (json/write-str data)})
 
+(defn create-todo* [params]
+  (-> params
+      todo-db/add-todo!
+      (select-keys [:content :id :done])
+      (wrap-response 201)))
+
 (defn create-todo [request]
   (let [body   (parse-body (:body request))
         parsed-body (s/conform ::spec/create-params body)]
     (if (= parsed-body ::s/invalid)
       (wrap-response {:error (s/explain-str ::spec/create-params body)} 400)
-      (-> parsed-body
-          todo-db/add-todo!
-          (select-keys [:content :id :done])
-          (wrap-response 201)))))
+      (create-todo* parsed-body))))
+
+(defn update-todo* [updated-todo]
+  (-> updated-todo
+      todo-db/update-todo!
+      (select-keys [:content :id :done])
+      (wrap-response 200)))
 
 (defn update-todo [request]
   (let [body (parse-body (:body request))
@@ -36,10 +45,7 @@
         (if (= parsed-body ::s/invalid)
                 (wrap-response {:error (s/explain-str ::spec/update-params body)} 400)
                 (let [updated-todo (select-keys (merge todo parsed-body) [:content :id :done])]
-                  (-> updated-todo
-                      todo-db/update-todo!
-                      (select-keys [:content :id :done])
-                      (wrap-response 200))))))))
+                  (update-todo* updated-todo)))))))
 
 (defn list-todos [request]
   (let [todos (todo-db/list-todos)]
