@@ -1,10 +1,12 @@
 (ns doit.core-test
+  (:refer-clojure :exclude [subs])
   (:require [cljs.test :refer-macros [deftest testing is]]
             [re-frame.core :as rf]
             [day8.re-frame.test :as rf-test]
             [doit.events :as events]
             [doit.subs :as subs]
             [doit.views :as views]))
+
 (defn test-fixtures
   []
   ;; Rewriting ::update-todo event to return the updated todo assuming the update request

@@ -1,7 +1,8 @@
 (ns doit.views
+  (:refer-clojure :exclude [subs])
   (:require [re-frame.core :as rf]
             [reagent.core :as reagent]
-            [doit.subs :as sub]
+            [doit.subs :as subs]
             [doit.events :as events]))
 
 (defn header []
@@ -23,7 +24,7 @@
         "Add todo"]])))
 
 (defn remaining-todos-panel []
-  (let [todos (rf/subscribe [::sub/remaining-todos])]
+  (let [todos (rf/subscribe [::subs/remaining-todos])]
     (fn []
       [:div.remaining-todos-panel
        [:h3 {:style {:text-align "center"}} "Tasks to do"]
@@ -36,7 +37,7 @@
            (:content todo)])]])))
 
 (defn completed-todos-panel []
-  (let [todos (rf/subscribe [::sub/completed-todos])]
+  (let [todos (rf/subscribe [::subs/completed-todos])]
     (fn []
       [:div.completed-todos-panel
        [:h3 {:style {:text-align "center"}} "Tasks completed"]
