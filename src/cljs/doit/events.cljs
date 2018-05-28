@@ -84,9 +84,7 @@
 (rf/reg-event-fx
  ::update-todo
  (fn [cofx [_ todo]]
-   (let [id (:id todo)
-         url (str todo-url (:id todo) "/")]
-     (prn url)
+   (let [url (str todo-url (:id todo) "/")]
      {:http-xhrio {:method          :put
                    :uri             url
                    :params          todo
