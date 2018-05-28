@@ -3,8 +3,8 @@
             [re-frame.core :as rf]
             [day8.re-frame.test :as rf-test]
             [doit.events :as events]
-            [doit.subs :as subs]))
-
+            [doit.subs :as subs]
+            [doit.views :as views]))
 (defn test-fixtures
   []
   ;; Rewriting ::update-todo event to return the updated todo assuming the update request
@@ -55,4 +55,14 @@
        (rf/dispatch [::events/mark-undone (:id new-todo-done)])
        (is (= 2 (count @remaining-todos)))
        (is (= 1 (count @completed-todos)))
-       (is (contains? (set @remaining-todos) new-todo))))))
+       (is (contains? (set @remaining-todos) new-todo)))
+
+     (testing "remaining-todos-panel renders all remaining todos"
+       (let [rendered-hiccup ((views/remaining-todos-panel))]
+         (is (clojure.set/subset? (set (map :content @remaining-todos))
+                                  (set (flatten rendered-hiccup))))))
+
+     (testing "completed-todos-panel renders all completed todos"
+       (let [rendered-hiccup ((views/completed-todos-panel))]
+         (is (clojure.set/subset? (set (map :content @completed-todos))
+                                  (set (flatten rendered-hiccup)))))))))
