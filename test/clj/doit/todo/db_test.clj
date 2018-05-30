@@ -3,7 +3,7 @@
             [clojure.test :refer :all]
             [doit.fixtures :as fixtures]))
 
-(use-fixtures :once fixtures/load-config fixtures/create-migrate-destroy-db)
+(use-fixtures :once fixtures/load-config fixtures/migrate-destroy-db)
 (use-fixtures :each fixtures/isolate-db)
 
 (deftest add-todo-query-test

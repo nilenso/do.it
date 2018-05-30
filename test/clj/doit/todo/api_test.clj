@@ -6,7 +6,7 @@
              [clojure.data.json :as json]
              [doit.config :as config]))
 
-(use-fixtures :once fixtures/load-config fixtures/create-migrate-destroy-db fixtures/start-stop-server)
+(use-fixtures :once fixtures/load-config fixtures/migrate-destroy-db fixtures/start-stop-server)
 (use-fixtures :each fixtures/isolate-db)
 
 (defn todo-api-end-point []

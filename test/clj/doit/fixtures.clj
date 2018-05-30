@@ -13,28 +13,12 @@
   (f)
   (stop-server!))
 
-(defn conn-uri []
-  (let [{:keys [host port dbname dbtype user password]} (config/db)]
-    {:connection-uri
-     (format "jdbc:%s://%s:%s/?user=%s&password=%s"
-             dbtype
-             host
-             port
-             user
-             password)}))
-
-(defn create-db []
-  (let [{:keys [dbname]} (config/db)
-        cmd              (format "CREATE DATABASE %s" dbname)]
-    (jdbc/db-do-commands (conn-uri) false cmd)))
-
 (defn destroy-db []
-  (let [{:keys [dbname]} (config/db)
-        cmd              (format "DROP DATABASE %s" dbname)]
-    (jdbc/db-do-commands (conn-uri) false cmd)))
+  (jdbc/with-db-transaction [conn (config/db)]
+    (jdbc/execute! conn "DROP SCHEMA IF EXISTS public CASCADE;")
+    (jdbc/execute! conn "CREATE SCHEMA IF NOT EXISTS public;")))
 
-(defn create-migrate-destroy-db [f]
-  (create-db)
+(defn migrate-destroy-db [f]
   (migrate)
   (f)
   (destroy-db))
