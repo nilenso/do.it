@@ -1,11 +1,70 @@
 (ns doit.core-test
+  (:refer-clojure :exclude [subs])
   (:require [cljs.test :refer-macros [deftest testing is]]
-            [doit.events :as events]))
+            [re-frame.core :as rf]
+            [day8.re-frame.test :as rf-test]
+            [doit.events :as events]
+            [doit.subs :as subs]
+            [doit.views :as views]))
 
-(deftest test-get-todo-success
-  (testing "if retrieved todos are added to app db"
-    (let [old-db {:todos [{:content "old content" :id 1}] :other-keys :some-vals}
-          todos [{:content "new todo 1" :id 2}
-                 {:content "new todo 2" :id 3}]
-          new-db (events/get-todo-success old-db [:get-todo-success todos])]
-      (is (= (:todos new-db) todos)))))
+(defn test-fixtures
+  []
+  ;; Rewriting ::update-todo event to return the updated todo assuming the update request
+  ;; will be successful. This event is used by event ::mark-done and ::mark-undone
+  (rf/reg-event-fx
+   ::events/update-todo
+   (fn [cofx [_ todo]]
+     {:db (:db cofx)
+      :dispatch [::events/update-todo-success todo]})))
+
+(deftest event-handler-and-subs-test
+  (rf-test/run-test-sync
+   (test-fixtures)
+   (rf/dispatch [::events/initialize-db])
+
+   ;; Assuming http requests made by ::get-todos, ::add-todo succeeds and
+   ;; they call the corresponding success events
+   (let [backend-todos   [{:content "test todo 1" :done true :id 1}
+                          {:content "test todo 2" :done false :id 2}]
+         new-todo        {:content "new todo" :done false :id 3}
+         new-todo-done   {:content "new todo" :done true :id 3}
+         all-todos       (rf/subscribe [::subs/todos])
+         completed-todos (rf/subscribe [::subs/completed-todos])
+         remaining-todos (rf/subscribe [::subs/remaining-todos])]
+
+     (testing "user can fetch todos from backend"
+       (rf/dispatch [::events/get-todos-success backend-todos])
+       (is (= backend-todos (vec @all-todos))))
+
+     (testing "user can add a new todo"
+       (rf/dispatch [::events/add-todo-success new-todo])
+       (is (= 3 (count @all-todos)))
+       (is (contains? (set @all-todos) new-todo))
+
+       (is (= 2 (count @remaining-todos)))
+       (is (contains? (set @remaining-todos) new-todo))
+
+       (is (= 1 (count @completed-todos)))
+       (is (not (contains? (set @completed-todos) new-todo))))
+
+     (testing "user can mark a remaining todo as done"
+       (rf/dispatch [::events/mark-done (:id new-todo)])
+       (is (= 1 (count @remaining-todos)))
+       (is (= 2 (count @completed-todos)))
+       (is (contains? (set @completed-todos) new-todo-done)))
+
+     (testing "user can mark a completed todo as undone"
+       (rf/dispatch [::events/mark-undone (:id new-todo-done)])
+       (is (= 2 (count @remaining-todos)))
+       (is (= 1 (count @completed-todos)))
+       (is (contains? (set @remaining-todos) new-todo)))
+
+     (testing "remaining-todos-panel renders all remaining todos"
+       (let [rendered-hiccup ((views/remaining-todos-panel))]
+         (is (clojure.set/subset? (set (map :content @remaining-todos))
+                                  (set (flatten rendered-hiccup))))))
+
+     (testing "completed-todos-panel renders all completed todos"
+       (let [rendered-hiccup ((views/completed-todos-panel))]
+         (is (clojure.set/subset? (set (map :content @completed-todos))
+                                  (set (flatten rendered-hiccup)))))))))

@@ -6,31 +6,49 @@
    [clojure.spec.alpha :as s]))
 
 (defn parse-body [req-body]
-  (json/read-str (slurp (.bytes req-body)) :key-fn keyword))
+  (-> req-body
+      (.bytes)
+      (slurp)
+      (json/read-str :key-fn keyword)))
 
-(defn response-400 [err]
-  {:status  400
+(defn wrap-response [data status]
+  {:status status
    :headers {"Content-Type" "application/json"}
-   :body    err})
+   :body (json/write-str data)})
 
-(defn response-201 [body]
-  {:status  201
-   :headers {"Content-Type" "application/json"}
-   :body    body})
+(defn create-todo* [params]
+  (-> params
+      todo-db/add-todo!
+      (select-keys [:content :id :done])
+      (wrap-response 201)))
 
 (defn create-todo [request]
   (let [body   (parse-body (:body request))
-        parsed-body (s/conform ::spec/todo-in body)]
+        parsed-body (s/conform ::spec/create-params body)]
     (if (= parsed-body ::s/invalid)
-      (response-400 (s/explain-str ::spec/todo-in body))
-      (response-201 (-> parsed-body
-                        todo-db/add-todo!
-                        first
-                        (select-keys [:content :id])
-                        json/write-str)))))
+      (wrap-response {:error (s/explain-str ::spec/create-params body)} 400)
+      (create-todo* parsed-body))))
+
+(defn update-todo* [updated-todo]
+  (-> updated-todo
+      todo-db/update-todo!
+      (select-keys [:content :id :done])
+      (wrap-response 200)))
+
+(defn update-todo [request]
+  (let [body (parse-body (:body request))
+        id (Integer. (get-in request [:route-params :id]))
+        todo (todo-db/retrieve-todo id)]
+    (if-not todo
+      (wrap-response {:error (format "todo with id %s not found" id)} 404)
+      (let [parsed-body (s/conform ::spec/update-params body)]
+        (if (= parsed-body ::s/invalid)
+                (wrap-response {:error (s/explain-str ::spec/update-params body)} 400)
+                (let [updated-todo (select-keys (merge todo parsed-body) [:content :id :done])]
+                  (update-todo* updated-todo)))))))
 
 (defn list-todos [request]
   (let [todos (todo-db/list-todos)]
-    {:status  200
-     :headers {"Content-Type" "application/json"}
-     :body    (json/write-str (map #(select-keys % [:content :id]) todos))}))
+    (wrap-response
+     (map #(select-keys % [:content :id :done]) todos)
+     200)))

@@ -7,7 +7,7 @@ jobs:
       - image: postgres:9.4.1
         environment:
           POSTGRES_USER: root
-          POSTGRES_DB: doit
+          POSTGRES_DB: doit_test
     environment:
       JVM_OPTS: -Xmx3200m
       LEIN_ROOT: nbd

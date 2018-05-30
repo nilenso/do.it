@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as re-frame]
             [doit.events :as events]
+            [doit.subs]
             [doit.views :as views]
             [doit.config :as config]))
 
@@ -17,6 +18,7 @@
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
+  (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::events/get-todos])
   (dev-setup)
   (mount-root))

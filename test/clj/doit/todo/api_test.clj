@@ -1,52 +1,78 @@
 (ns doit.todo.api-test
-  (:require  [clojure.test :as t]
+  (:require  [clojure.test :refer :all]
              [doit.fixtures :as fixtures]
+             [doit.todo.db :as todo-db]
              [org.httpkit.client :as http]
              [clojure.data.json :as json]
              [doit.config :as config]))
 
-(def todo-api-end-point (str config/api-end-point "todo/"))
-(t/use-fixtures :once fixtures/start-stop-server fixtures/migrate-destroy-db)
-(t/use-fixtures :each fixtures/isolate-db)
+(use-fixtures :once fixtures/load-config fixtures/migrate-destroy-db fixtures/start-stop-server)
+(use-fixtures :each fixtures/isolate-db)
 
-(defn create-todo-api-call [body]
+(defn todo-api-end-point []
+  (let [{:keys [host port]} (config/webserver)]
+    (format "http://%s:%s/api/todo/" host port)))
+
+(defn post-api-call [url body]
   @(http/post
-   todo-api-end-point
-   {:header "Content-Type: application/json"
-    :body   (json/write-str body)}))
+    url
+    {:header "Content-Type: application/json"
+     :body   (json/write-str body)}))
 
 (defn parse-body [body]
   (json/read-str body :key-fn keyword))
 
-(t/deftest test-create-todo-api
-  (t/testing "user can create a todo"
-    (let [test-content "Test Todo"
-          {:keys [status body]} (create-todo-api-call {:content test-content})
-          parsed-body (parse-body body)]
-      (t/is (= status 201))
-      (t/is (= (set (keys parsed-body)) #{:content :id}))
-      (t/is (= (:content parsed-body) test-content)))))
+(defn create-todo [content]
+  (-> (post-api-call (todo-api-end-point) {:content content})
+      (update :body parse-body)))
 
-(t/deftest test-create-todo-bad-request
-  (t/testing "returns error on bad request"
-    (let [{:keys [status]} (create-todo-api-call {:ody "Test Todo"})]
-      (t/is (= status 400)))))
+(defn update-todo [id content]
+  (let [url (str (todo-api-end-point) id "/")]
+    (-> @(http/put
+          url
+          {:header "Content-Type: application/json"
+           :body   (json/write-str content)})
+        (update :body parse-body))))
 
-(t/deftest test-retrieve-todo-api
-  (t/testing "user can retrieve list of todos"
-    (let [test-todo1 {:content "test todo 1"}
-          test-todo2 {:content "test todo 2"}
-          _ (create-todo-api-call test-todo1)
-          _ (create-todo-api-call test-todo2)
-          {:keys [status body]} @(http/get
-                                  todo-api-end-point
-                                  {:header "Content-Type: application/json"
-                                   :body   (json/write-str
-                                            {:content "Test Todo"})})
-          parsed-body (parse-body body)]
-      (t/is (= status 200))
-      (t/is (= (count parsed-body) 2))
-      (t/is (= (:content (first parsed-body))
-               (:content test-todo1)))
-      (t/is (= (set (keys (first parsed-body)))
-               #{:content :id})))))
+(defn list-todos []
+  (-> @(http/get (todo-api-end-point)) (update :body parse-body)))
+
+(deftest test-todo-crud
+  (let [content1        "Test Todo 1"
+        content2        "Test Todo 2"
+        todo-response-1 (create-todo content1)
+        todo-response-2 (create-todo content2)]
+    (testing "user can create a todo"
+      (is (= (:status todo-response-1) 201))
+      (is (= (:status todo-response-2) 201))
+      (is (= (set (keys (:body todo-response-1))) #{:content :id :done}))
+      (is (= (get-in todo-response-2 [:body :content]) content2)))
+    (testing "user can list added todos"
+      (let [list-response (list-todos)]
+        (is (= 200 (:status list-response)))
+        (is (= 2 (count (:body list-response))))
+        (is (= #{content1 content2}
+               (set (map :content (:body list-response)))))))
+
+    (let [id-1 (get-in todo-response-1 [:body :id])]
+      (testing "user can update an added todo"
+        (let [updated-data    {:content "new content" :done true :id id-1}
+              update-response (update-todo id-1 updated-data)]
+          (is (= 200 (:status update-response)))
+          (is (= (set (keys (:body update-response))) #{:content :id :done}))
+          (is (= (:done updated-data) (get-in update-response [:body :done])))
+          (is (= (:content updated-data) (get-in update-response [:body :content])))))
+      (testing "user get bad request error on attempting to update todo with bad data"
+        (let [bad-updated-data {:cont "new content" :done false}
+              {:keys [status]} (update-todo id-1 bad-updated-data)]
+          (is (= 400 status)))))))
+
+(deftest test-create-todo-bad-request
+  (testing "user gets error on bad request"
+    (let [{:keys [status]} (post-api-call (todo-api-end-point) {:ody "Test Todo"})]
+      (is (= status 400)))))
+
+(deftest test-update-non-existant
+  (testing "user cannot update a non existant todo"
+    (let [{:keys [status]} (update-todo 1 {:content "new todo" :done false :id 1})]
+      (is (= 404 status)))))

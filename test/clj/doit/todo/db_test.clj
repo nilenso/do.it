@@ -3,18 +3,18 @@
             [clojure.test :refer :all]
             [doit.fixtures :as fixtures]))
 
-(use-fixtures :once fixtures/migrate-destroy-db)
+(use-fixtures :once fixtures/load-config fixtures/migrate-destroy-db)
 (use-fixtures :each fixtures/isolate-db)
 
 (deftest add-todo-query-test
   (testing "User can add a todo to db"
-    (let [vals {:content "test todo"}
-          res (todo-db/add-todo! vals)]
-      (is (= (count res) 1))
-      (is (= (:content (first res)) (:content vals)))
-      (is (= (set (keys (first res))) #{:content :id :created_at})))))
+    (let [params {:content "test todo"}
+          response (todo-db/add-todo! params)]
+      (is (= (:content response) (:content params)))
+      (is (= (:done response) false))
+      (is (= (set (keys response)) #{:content :id :created_at :done})))))
 
-(deftest list-todo-query-test
+(deftest list-todos-query-test
   (testing "User can list the todos"
     (let [test-todo1 {:content "test todo 1"}
           test-todo2 {:content "test todo 2"}
@@ -23,4 +23,13 @@
           res (todo-db/list-todos)]
       (is (= (count res) 2))
       (is (= (:content (first res)) (:content test-todo1)))
-      (is (= (set (keys (first res))) #{:content :id :created_at})))))
+      (is (= (set (keys (first res))) #{:content :id :created_at :done})))))
+
+(deftest update-todo-query-test
+  (testing "User can update a todo"
+    (let [params {:content "test todo"}
+          todo (todo-db/add-todo! params)
+          updated-params {:content "new todo" :done true :id (:id todo)}
+          response (todo-db/update-todo! updated-params)]
+      (is (= updated-params
+             (select-keys response (keys updated-params)))))))

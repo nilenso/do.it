@@ -5,7 +5,7 @@
    [doit.config :as config]])
 
 (defn load-config []
-  {:datastore (jdbc/sql-database config/db)
+  {:datastore (jdbc/sql-database (config/db))
    :migrations (jdbc/load-resources "migrations")})
 
 (defn migrate []

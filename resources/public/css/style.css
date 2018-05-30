@@ -24,3 +24,13 @@ hr {
     padding: 5px 10px;
     margin-right: 5px;
 }
+
+.check-box {
+    margin: 5px;
+    cursor: pointer;
+}
+
+.completed-todos{
+    text-decoration: line-through;
+    color: #808080;
+}
