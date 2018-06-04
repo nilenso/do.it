@@ -16,3 +16,6 @@
 
 (defn webserver []
   (get @config :webserver))
+
+(defn google-client-id []
+  (get @config :google-client-id))
