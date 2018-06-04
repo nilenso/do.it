@@ -3,6 +3,7 @@
             [re-frame.core :as re-frame]
             [doit.events :as events]
             [doit.subs]
+            [doit.auth :as auth]
             [doit.views :as views]
             [doit.config :as config]))
 
@@ -21,4 +22,5 @@
   (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::events/get-todos])
   (dev-setup)
-  (mount-root))
+  (mount-root)
+  (auth/init))

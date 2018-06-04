@@ -3,6 +3,7 @@
   (:require [re-frame.core :as rf]
             [reagent.core :as reagent]
             [doit.subs :as subs]
+            [doit.config :as config]
             [doit.events :as events]))
 
 (defn header []
@@ -49,13 +50,22 @@
             {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
            (:content todo)])]])))
 
+(defn sign-in-panel []
+  [:div {:id config/sign-in-btn-id}])
+
 (defn main-panel []
-  [:div.page
-   [header]
-   [add-todo-form]
-   [:br]
-   [:hr]
-   [remaining-todos-panel]
-   [:br]
-   [:hr]
-   [completed-todos-panel]])
+  (let [auth-token (rf/subscribe [::subs/auth-token])]
+    (fn []
+      [:div.page
+       [header]
+       (if-not @auth-token
+         [:div
+          [sign-in-panel]]
+         [:div
+          [add-todo-form]
+          [:br]
+          [:hr]
+          [remaining-todos-panel]
+          [:br]
+          [:hr]
+          [completed-todos-panel]])])))

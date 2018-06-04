@@ -21,3 +21,8 @@
 
  (fn [todos query-v _]
    (filter :done todos)))
+
+(rf/reg-sub
+ ::auth-token
+ (fn [db _]
+   (get-in db [:user :token])))
