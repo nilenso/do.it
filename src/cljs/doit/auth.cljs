@@ -1,6 +1,8 @@
 (ns doit.auth
+  (:refer-clojure :exclude [subs])
   (:require [cljs.core.async :refer [put! >! <! take chan buffer ]]
             [doit.config :as config]
+            [doit.subs :as subs]
             [re-frame.core :as rf]
             [goog.object]))
 
@@ -27,7 +29,7 @@
 
 (defn on-gapi-load []
   (prn "gapi auth2 loaded")
-  (.init (goog.object/get js/gapi "auth2") (clj->js {:client_id (config/client-id)}))
+  (.init (goog.object/get js/gapi "auth2") (clj->js {:client_id @(rf/subscribe [::subs/client-id])}))
   (render-sign-btn))
 
 (defn init []

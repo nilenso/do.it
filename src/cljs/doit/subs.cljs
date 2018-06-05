@@ -26,3 +26,8 @@
  ::auth-token
  (fn [db _]
    (get-in db [:user :token])))
+
+(rf/reg-sub
+ ::client-id
+ (fn [db _]
+   (get db :client-id)))

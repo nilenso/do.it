@@ -21,6 +21,30 @@
      :after (fn [context]
               (check-db-spec context (get-in context [:effects :db]))))))
 
+
+(defn get-client-id-success
+  [db [_ {:keys [client-id]}]]
+  (assoc db :client-id client-id))
+
+(rf/reg-event-db
+ ::get-client-id-success
+ [db-spec-inspector]
+ get-client-id-success)
+
+(defn get-client-id
+  [cofx _]
+  {:http-xhrio {:method          :get
+                :uri             "/api/auth/client-id/"
+                :timeout         8000
+                :format          (ajax/json-request-format)
+                :response-format (ajax/json-response-format {:keywords? true})
+                :on-success      [::get-client-id-success]
+                :on-failure      [::request-failed]}})
+
+(rf/reg-event-fx
+ ::get-client-id
+ get-client-id)
+
 (rf/reg-event-db
  ::request-failed
  [db-spec-inspector]

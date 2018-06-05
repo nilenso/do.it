@@ -11,4 +11,8 @@
 
 (s/def ::todos (s/map-of ::id ::todo))
 
-(s/def ::app-db (s/keys :req-un [::todos]))
+(s/def ::client-id string?)
+
+(s/def ::token string?)
+
+(s/def ::app-db (s/keys :req-un [::todos] :opt-un [::client-id ::token]))
