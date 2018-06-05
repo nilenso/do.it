@@ -3,12 +3,17 @@
   (:require [org.httpkit.server :as httpkit]
             [doit.config :as config]
             [doit.route :refer [route]]
+            [doit.middleware :as mw]
             [doit.db :as db]
             [bidi.ring :refer [make-handler]]))
 
 (defonce server (atom nil))
 
-(def handler (make-handler route))
+(def handler (->
+              route
+              make-handler
+              mw/wrap-json-request
+              mw/wrap-json-response))
 
 (defn start-server! []
   (let [port (:port (config/webserver))]
