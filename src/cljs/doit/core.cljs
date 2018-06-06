@@ -21,7 +21,6 @@
 (defn ^:export init []
   (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::events/get-client-id])
-  (re-frame/dispatch-sync [::events/get-todos])
   (dev-setup)
   (mount-root)
   (auth/init))

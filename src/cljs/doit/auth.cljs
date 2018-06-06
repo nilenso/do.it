@@ -3,14 +3,16 @@
   (:require [cljs.core.async :refer [put! >! <! take chan buffer ]]
             [doit.config :as config]
             [doit.subs :as subs]
+            [doit.events :as events]
             [re-frame.core :as rf]
             [goog.object]))
 
 (defn save-auth-token
-  [db [_ token]]
-  (assoc-in db [:user :token] token))
+  [cofx [_ token]]
+  {:db (assoc-in (:db cofx) [:user :token] token)
+   :dispatch [::events/get-todos]})
 
-(rf/reg-event-db
+(rf/reg-event-fx
  ::save-auth-token
  save-auth-token)
 

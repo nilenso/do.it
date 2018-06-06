@@ -21,6 +21,9 @@
      :after (fn [context]
               (check-db-spec context (get-in context [:effects :db]))))))
 
+(defn token-headers-map [cofx]
+  (let [token (get-in cofx [:db :user :token])]
+    {"Authorization" (str "Bearer " token)}))
 
 (defn get-client-id-success
   [db [_ {:keys [client-id]}]]
@@ -83,6 +86,7 @@
                 :uri             todo-url
                 :params          vals
                 :timeout         8000
+                :headers         (token-headers-map cofx)
                 :format          (ajax/json-request-format)
                 :response-format (ajax/json-response-format {:keywords? true})
                 :on-success      [::add-todo-success]
@@ -94,13 +98,14 @@
 
 (defn get-todos
   [cofx _]
-  {:http-xhrio {:method :get
-                :uri todo-url
+  {:http-xhrio {:method          :get
+                :uri             todo-url
                 :timeout         8000
+                :headers         (token-headers-map cofx)
                 :format          (ajax/json-request-format)
                 :response-format (ajax/json-response-format {:keywords? true})
-                :on-success [::get-todos-success]
-                :on-failure [::request-failed]}})
+                :on-success      [::get-todos-success]
+                :on-failure      [::request-failed]}})
 
 (rf/reg-event-fx
  ::get-todos
@@ -113,6 +118,7 @@
                   :uri             url
                   :params          todo
                   :timeout         8000
+                  :headers         (token-headers-map cofx)
                   :format          (ajax/json-request-format)
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [::update-todo-success]
@@ -124,7 +130,7 @@
 
 (defn mark-done
   [{:keys [db]} [_ id]]
-  (let [todo        (get-in db [:todos id])
+  (let [todo         (get-in db [:todos id])
         updated-todo (assoc todo :done true)]
     {:dispatch [::update-todo updated-todo]}))
 
@@ -134,7 +140,7 @@
 
 (defn mark-undone
   [{:keys [db]} [_ id]]
-  (let [todo        (get-in db [:todos id])
+  (let [todo         (get-in db [:todos id])
         updated-todo (assoc todo :done false)]
     {:dispatch [::update-todo updated-todo]}))
 
