@@ -28,6 +28,10 @@ http {
                  proxy_pass http://127.0.0.1:3449;
          }
 
+	 location /images/ {
+                 proxy_pass http://127.0.0.1:3449;
+         }
+
          location / {
                  # Serve the contents of index.html, no matter what the URL
                  proxy_pass http://127.0.0.1:3449;
