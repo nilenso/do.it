@@ -8,8 +8,7 @@
 
 (defn wrap-response [data status]
   {:status status
-   :headers {"Content-Type" "application/json"}
-   :body (json/write-str data)})
+   :body data})
 
 (defn client-id [request]
   (wrap-response {:client-id (config/google-client-id)} 200))
