@@ -10,9 +10,12 @@
 (use-fixtures :once fixtures/load-config fixtures/migrate-destroy-db fixtures/start-stop-server)
 (use-fixtures :each fixtures/isolate-db)
 
-(defn todo-api-end-point []
+(defn api-end-point []
   (let [{:keys [host port]} (config/webserver)]
-    (format "http://%s:%s/api/todo/" host port)))
+    (format "http://%s:%s/api/" host port)))
+
+(defn todo-api-end-point []
+ (str (api-end-point) "todo/"))
 
 (defn post-api-call [url body token]
   @(http/post
@@ -42,6 +45,12 @@
         (todo-api-end-point)
         {:headers {"Authorization" (str "Bearer " token)}})
       (update :body parse-body)))
+
+(defn logout [token]
+  @(http/post
+    (str (api-end-point) "auth/logout/")
+    {:headers {"Content-Type" "application/json"
+                     "Authorization" (str "Bearer " token)}}))
 
 (deftest test-todo-crud
   (let [token "tk1"
@@ -83,6 +92,15 @@
         (let [bad-updated-data {:cont "new content" :done false}
               {:keys [status]} (update-todo id-1 bad-updated-data token)]
           (is (= 400 status)))))))
+
+(deftest test-logout
+  (testing "user can logout"
+    (let [token "tk1"
+          user (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (auth/current-unix-time))})
+          logout-response (logout token)
+          list-response (list-todos token)]
+      (is (= 200 (:status logout-response)))
+      (is (= 403 (:status list-response))))))
 
 (deftest test-update-non-existant
   (testing "user cannot update a non existant todo"

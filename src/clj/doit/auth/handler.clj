@@ -12,3 +12,7 @@
 
 (defn client-id [request]
   (wrap-response {:client-id (config/google-client-id)} 200))
+
+(defn logout [request]
+  (let [user-id (get request :user-id)]
+    (user-db/update-user! {:id user-id :token nil :token_exp nil})))
