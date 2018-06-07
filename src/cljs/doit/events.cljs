@@ -4,7 +4,6 @@
             [day8.re-frame.http-fx]
             [ajax.core :as ajax]
             [doit.spec :as spec]
-            [doit.auth :as auth]
             [clojure.spec.alpha :as s]
             [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
@@ -21,6 +20,10 @@
                (check-db-spec context (get-in context [:coeffects :db])))
      :after (fn [context]
               (check-db-spec context (get-in context [:effects :db]))))))
+
+(defn token-headers-map [cofx]
+  (let [token (get-in cofx [:db :user :token])]
+    {"Authorization" (str "Bearer " token)}))
 
 (defn get-client-id-success
   [db [_ {:keys [client-id]}]]
@@ -83,7 +86,7 @@
                 :uri             todo-url
                 :params          vals
                 :timeout         8000
-                :headers         (auth/token-headers-map cofx)
+                :headers         (token-headers-map cofx)
                 :format          (ajax/json-request-format)
                 :response-format (ajax/json-response-format {:keywords? true})
                 :on-success      [::add-todo-success]
@@ -98,7 +101,7 @@
   {:http-xhrio {:method          :get
                 :uri             todo-url
                 :timeout         8000
-                :headers         (auth/token-headers-map cofx)
+                :headers         (token-headers-map cofx)
                 :format          (ajax/json-request-format)
                 :response-format (ajax/json-response-format {:keywords? true})
                 :on-success      [::get-todos-success]
@@ -115,7 +118,7 @@
                   :uri             url
                   :params          todo
                   :timeout         8000
-                  :headers         (auth/token-headers-map cofx)
+                  :headers         (token-headers-map cofx)
                   :format          (ajax/json-request-format)
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [::update-todo-success]

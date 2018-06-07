@@ -7,9 +7,6 @@
             [re-frame.core :as rf]
             [goog.object]))
 
-(defn token-headers-map [cofx]
-  (let [token (get-in cofx [:db :user :token])]
-    {"Authorization" (str "Bearer " token)}))
 
 (defn get-auth-instance []
   (.getAuthInstance (goog.object/get js/gapi "auth2")))
