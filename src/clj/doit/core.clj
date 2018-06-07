@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [org.httpkit.server :as httpkit]
             [doit.config :as config]
-            [doit.route :refer [route]]
+            [doit.routes :refer [routes]]
             [doit.middleware :as mw]
             [doit.db :as db]
             [bidi.ring :refer [make-handler]]))
@@ -10,7 +10,7 @@
 (defonce server (atom nil))
 
 (def handler (->
-              route
+              routes
               make-handler
               mw/wrap-json-request
               mw/wrap-json-response))
