@@ -5,6 +5,7 @@
             [day8.re-frame.test :as rf-test]
             [doit.events :as events]
             [doit.subs :as subs]
+            [doit.auth :as auth]
             [doit.views :as views]))
 
 (defn test-fixtures
@@ -30,7 +31,12 @@
          new-todo-done   {:content "new todo" :done true :id 3}
          all-todos       (rf/subscribe [::subs/todos])
          completed-todos (rf/subscribe [::subs/completed-todos])
-         remaining-todos (rf/subscribe [::subs/remaining-todos])]
+         remaining-todos (rf/subscribe [::subs/remaining-todos])
+         auth-token      (rf/subscribe [::subs/auth-token])]
+
+     (testing "signin success can set auth-token"
+       (rf/dispatch [::auth/save-auth-token "tkn"])
+       (is (= "tkn" @auth-token)))
 
      (testing "user can fetch todos from backend"
        (rf/dispatch [::events/get-todos-success backend-todos])
@@ -67,4 +73,9 @@
      (testing "completed-todos-panel renders all completed todos"
        (let [rendered-hiccup ((views/completed-todos-panel))]
          (is (clojure.set/subset? (set (map :content @completed-todos))
-                                  (set (flatten rendered-hiccup)))))))))
+                                  (set (flatten rendered-hiccup))))))
+
+     (testing "signout removes auth token and todos"
+       (rf/dispatch [::auth/sign-out])
+       (is (= nil @auth-token))
+       (is (= nil @all-todos))))))
