@@ -15,21 +15,21 @@
   (.getAuthInstance (goog.object/get js/gapi "auth2")))
 
 (defn save-auth-token
-  [cofx [_ token]]
-  {:db (assoc-in (:db cofx) [:user :token] token)
+  [{:keys [db]} [_ token]]
+  {:db (assoc-in db [:user :token] token)
    :dispatch [::events/get-todos]})
 
 (rf/reg-event-fx
  ::save-auth-token
  save-auth-token)
 
-(defn remove-user-details
+(defn sign-out-event
   [cofx _]
-  {:db (dissoc (:db cofx) :user)})
+  {:dispatch [::events/initialize-db]})
 
 (rf/reg-event-fx
- ::remove-user-details
- remove-user-details)
+ ::sign-out
+ sign-out-event)
 
 (defn sign-in-success [gapi-user]
   (let [token (.-id_token (.getAuthResponse gapi-user))]
@@ -45,7 +45,7 @@
 
 (defn sign-out []
   (-> (.signOut (get-auth-instance))
-      (.then #(rf/dispatch [::events/initialize-db]))))
+      (.then #(rf/dispatch [::sign-out]))))
 
 (defn on-gapi-load []
   (prn "gapi auth2 loaded")
