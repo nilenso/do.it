@@ -2,7 +2,7 @@
   (:require  [clojure.test :refer :all]
              [doit.fixtures :as fixtures]
              [doit.user.db :as user-db]
-             [doit.auth.auth :as auth]
+             [doit.util :as util]
              [org.httpkit.client :as http]
              [clojure.data.json :as json]
              [doit.config :as config]))
@@ -54,7 +54,7 @@
 
 (deftest test-todo-crud
   (let [token "tk1"
-        user (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (auth/current-unix-time))})
+        user (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
         content1        "Test Todo 1"
         content2        "Test Todo 2"
         todo-response-1 (create-todo content1 token)
@@ -96,7 +96,7 @@
 (deftest test-logout
   (testing "user can logout"
     (let [token "tk1"
-          user (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (auth/current-unix-time))})
+          user (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
           logout-response (logout token)
           list-response (list-todos token)]
       (is (= 200 (:status logout-response)))
