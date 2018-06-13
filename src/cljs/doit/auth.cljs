@@ -7,7 +7,6 @@
             [re-frame.core :as rf]
             [goog.object]))
 
-
 (defn get-instance []
   (.getAuthInstance (goog.object/get js/gapi "auth2")))
 
@@ -16,17 +15,9 @@
   {:db (assoc-in db [:user :token] token)
    :dispatch [::events/get-todos]})
 
-(rf/reg-event-fx
- ::save-auth-token
- save-auth-token)
-
 (defn sign-out-event
   [cofx _]
   {:dispatch [::events/initialize-db]})
-
-(rf/reg-event-fx
- ::sign-out
- sign-out-event)
 
 (defn sign-in-success [gapi-user]
   (let [token (.-id_token (.getAuthResponse gapi-user))]
@@ -49,4 +40,13 @@
   (.init (goog.object/get js/gapi "auth2") (clj->js {:client_id @(rf/subscribe [::subs/client-id])})))
 
 (defn init []
+  (rf/reg-event-fx
+   ::save-auth-token
+   save-auth-token)
+
+  (rf/reg-event-fx
+   ::sign-out
+   sign-out-event))
+
+(defn load-gapi []
   (.load js/gapi "auth2" on-gapi-load))

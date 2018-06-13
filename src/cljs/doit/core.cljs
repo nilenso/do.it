@@ -1,8 +1,9 @@
 (ns doit.core
+  (:refer-clojure :exclude [subs])
   (:require [reagent.core :as reagent]
             [re-frame.core :as re-frame]
             [doit.events :as events]
-            [doit.subs]
+            [doit.subs :as subs]
             [doit.auth :as auth]
             [doit.views :as views]
             [doit.config :as config]))
@@ -18,9 +19,15 @@
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))
 
+(defn reg-all []
+  (events/init)
+  (subs/init)
+  (auth/init))
+
 (defn ^:export init []
+  (reg-all)
   (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::events/get-client-id])
   (dev-setup)
   (mount-root)
-  (auth/init))
+  (auth/load-gapi))

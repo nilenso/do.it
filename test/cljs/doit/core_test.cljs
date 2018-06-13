@@ -3,6 +3,7 @@
   (:require [cljs.test :refer-macros [deftest testing is]]
             [re-frame.core :as rf]
             [day8.re-frame.test :as rf-test]
+            [doit.core :as core]
             [doit.events :as events]
             [doit.subs :as subs]
             [doit.auth :as auth]
@@ -12,6 +13,7 @@
   []
   ;; Rewriting ::update-todo event to return the updated todo assuming the update request
   ;; will be successful. This event is used by event ::mark-done and ::mark-undone
+  (core/reg-all)
   (rf/reg-event-fx
    ::events/update-todo
    (fn [cofx [_ todo]]
