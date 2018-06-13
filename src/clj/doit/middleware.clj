@@ -17,7 +17,7 @@
           (forbidden-response)))
       (forbidden-response))))
 
-(defn parse-body [req-body]
+(defn- parse-body [req-body]
   (-> req-body
       (.bytes)
       (slurp)
