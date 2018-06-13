@@ -34,7 +34,7 @@
          remaining-todos (rf/subscribe [::subs/remaining-todos])
          auth-token      (rf/subscribe [::subs/auth-token])]
 
-     (testing "signin success can set auth-token"
+     (testing "Can set auth-token in app-db"
        (rf/dispatch [::auth/save-auth-token "tkn"])
        (is (= "tkn" @auth-token)))
 
