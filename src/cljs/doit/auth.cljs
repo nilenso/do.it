@@ -8,7 +8,7 @@
             [goog.object]))
 
 
-(defn get-auth-instance []
+(defn get-instance []
   (.getAuthInstance (goog.object/get js/gapi "auth2")))
 
 (defn save-auth-token
@@ -37,11 +37,11 @@
   (prn "sign in failed"))
 
 (defn sign-in []
-  (-> (.signIn (get-auth-instance))
+  (-> (.signIn (get-instance))
       (.then sign-in-success sign-in-failure)))
 
 (defn sign-out []
-  (-> (.signOut (get-auth-instance))
+  (-> (.signOut (get-instance))
       (.then #(rf/dispatch [::sign-out]))))
 
 (defn on-gapi-load []
