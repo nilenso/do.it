@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [org.httpkit.server :as httpkit]
             [doit.config :as config]
-            [doit.routes :refer [routes]]
+            [doit.route :refer [routes]]
             [doit.middleware :as mw]
             [doit.db :as db]
             [bidi.ring :refer [make-handler]]))
