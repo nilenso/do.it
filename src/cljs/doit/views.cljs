@@ -25,6 +25,18 @@
                              (reset! content ""))}
         "Add todo"]])))
 
+(defn editable-todo [id]
+  (let [todo (rf/subscribe [::subs/todo id])
+        content (reagent/atom (:content @todo))]
+    (fn []
+      [:div
+       [:input {:type "text"
+                :value @content
+                :display "inline block"
+                :on-change (fn [val]
+                             (reset! content (.-value (.-target val)))
+                             (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}]])))
+
 (defn remaining-todos-panel []
   (let [todos (rf/subscribe [::subs/remaining-todos])]
     (fn []
@@ -36,7 +48,7 @@
           [:div
            [:i.check-box.far.fa-square
             {:on-click (fn [args] (rf/dispatch [::events/mark-done (:id todo)]))}]
-           (:content todo)])]])))
+           [editable-todo (:id todo)]])]])))
 
 (defn completed-todos-panel []
   (let [todos (rf/subscribe [::subs/completed-todos])]
@@ -49,7 +61,7 @@
           [:div
            [:i.check-box.far.fa-check-square
             {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
-           (:content todo)])]])))
+           [editable-todo (:id todo)]])]])))
 
 (defn todos-panel []
   [:div
