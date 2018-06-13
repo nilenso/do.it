@@ -39,7 +39,7 @@
   (prn "gapi auth2 loaded")
   (.init (goog.object/get js/gapi "auth2") (clj->js {:client_id @(rf/subscribe [::subs/client-id])})))
 
-(defn init []
+(defn registrations []
   (rf/reg-event-fx
    ::save-auth-token
    save-auth-token)
@@ -50,3 +50,7 @@
 
 (defn load-gapi []
   (.load js/gapi "auth2" on-gapi-load))
+
+(defn init []
+  (registrations)
+  (load-gapi))

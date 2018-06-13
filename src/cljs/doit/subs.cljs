@@ -1,7 +1,7 @@
 (ns doit.subs
   (:require [re-frame.core :as rf]))
 
-(defn init []
+(defn registrations []
   (rf/reg-sub
    ::todos
    (fn [db _]
@@ -32,3 +32,6 @@
    ::client-id
    (fn [db _]
      (get db :client-id))))
+
+(defn init []
+  (registrations))

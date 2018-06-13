@@ -13,7 +13,9 @@
   []
   ;; Rewriting ::update-todo event to return the updated todo assuming the update request
   ;; will be successful. This event is used by event ::mark-done and ::mark-undone
-  (core/reg-all)
+  (events/registrations)
+  (subs/registrations)
+  (auth/registrations)
   (rf/reg-event-fx
    ::events/update-todo
    (fn [cofx [_ todo]]

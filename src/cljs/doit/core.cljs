@@ -19,15 +19,11 @@
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))
 
-(defn reg-all []
+(defn ^:export init []
   (events/init)
   (subs/init)
-  (auth/init))
-
-(defn ^:export init []
-  (reg-all)
+  (auth/init)
   (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::events/get-client-id])
   (dev-setup)
-  (mount-root)
-  (auth/load-gapi))
+  (mount-root))

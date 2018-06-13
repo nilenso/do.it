@@ -107,7 +107,7 @@
     {:dispatch [::update-todo updated-todo]}))
 
 
-(defn init []
+(defn registrations []
   (rf/reg-event-db
    ::request-failed
    [db-spec-inspector]
@@ -161,3 +161,6 @@
    ::initialize-db
    (fn-traced [_ _]
       db/default-db)))
+
+(defn init []
+  (registrations))
