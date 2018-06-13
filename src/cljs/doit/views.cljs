@@ -3,6 +3,8 @@
   (:require [re-frame.core :as rf]
             [reagent.core :as reagent]
             [doit.subs :as subs]
+            [doit.auth :as auth]
+            [doit.config :as config]
             [doit.events :as events]))
 
 (defn header []
@@ -49,9 +51,11 @@
             {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
            (:content todo)])]])))
 
-(defn main-panel []
-  [:div.page
-   [header]
+(defn todos-panel []
+  [:div
+   [:a {:href "#"
+        :on-click (fn [_] (auth/sign-out))}
+    "Sign Out"]
    [add-todo-form]
    [:br]
    [:hr]
@@ -59,3 +63,19 @@
    [:br]
    [:hr]
    [completed-todos-panel]])
+
+(defn sign-in-panel []
+  [:div.sign-in-panel
+   [:a {:href     "#"
+         :on-click auth/sign-in}
+    [:img.sign-in-btn-img {:src "/images/btn_google_signin.png"
+                           :alt "sign in with Google"}]]])
+
+(defn main-panel []
+  (let [auth-token (rf/subscribe [::subs/auth-token])]
+    (fn []
+      [:div.page
+       [header]
+       (if-not @auth-token
+         [sign-in-panel]
+         [todos-panel])])))

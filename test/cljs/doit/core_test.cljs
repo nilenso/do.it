@@ -3,14 +3,19 @@
   (:require [cljs.test :refer-macros [deftest testing is]]
             [re-frame.core :as rf]
             [day8.re-frame.test :as rf-test]
+            [doit.core :as core]
             [doit.events :as events]
             [doit.subs :as subs]
+            [doit.auth :as auth]
             [doit.views :as views]))
 
 (defn test-fixtures
   []
   ;; Rewriting ::update-todo event to return the updated todo assuming the update request
   ;; will be successful. This event is used by event ::mark-done and ::mark-undone
+  (events/registrations)
+  (subs/registrations)
+  (auth/registrations)
   (rf/reg-event-fx
    ::events/update-todo
    (fn [cofx [_ todo]]
@@ -30,7 +35,12 @@
          new-todo-done   {:content "new todo" :done true :id 3}
          all-todos       (rf/subscribe [::subs/todos])
          completed-todos (rf/subscribe [::subs/completed-todos])
-         remaining-todos (rf/subscribe [::subs/remaining-todos])]
+         remaining-todos (rf/subscribe [::subs/remaining-todos])
+         auth-token      (rf/subscribe [::subs/auth-token])]
+
+     (testing "Can set auth-token in app-db"
+       (rf/dispatch [::auth/save-auth-token "tkn"])
+       (is (= "tkn" @auth-token)))
 
      (testing "user can fetch todos from backend"
        (rf/dispatch [::events/get-todos-success backend-todos])
@@ -67,4 +77,9 @@
      (testing "completed-todos-panel renders all completed todos"
        (let [rendered-hiccup ((views/completed-todos-panel))]
          (is (clojure.set/subset? (set (map :content @completed-todos))
-                                  (set (flatten rendered-hiccup)))))))))
+                                  (set (flatten rendered-hiccup))))))
+
+     (testing "signout removes auth token and todos"
+       (rf/dispatch [::auth/sign-out])
+       (is (= nil @auth-token))
+       (is (= nil @all-todos))))))

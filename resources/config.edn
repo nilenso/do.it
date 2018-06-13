@@ -7,7 +7,7 @@
                   :prod #long #or [#env HTTP_PORT 4000]}
   :host #profile {:default "localhost"
                   :prod #ref [:secrets :host]}}
-
+ :google-client-id #ref [:secrets :google-client-id]
  :db
  {:dbname #profile {:default "doit"
                     :test "doit_test"
