@@ -29,12 +29,11 @@
   (let [todo (rf/subscribe [::subs/todo id])
         content (reagent/atom (:content @todo))]
     (fn []
-      [:div
-       [:input.todo {:type "text"
-                :value @content
-                :on-change (fn [val]
-                             (reset! content (.-value (.-target val)))
-                             (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}]])))
+      [:input.todo {:type      "text"
+                    :value     @content
+                    :on-change (fn [val]
+                                 (reset! content (.-value (.-target val)))
+                                 (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}])))
 
 (defn remaining-todos-panel []
   (let [todos (rf/subscribe [::subs/remaining-todos])]
