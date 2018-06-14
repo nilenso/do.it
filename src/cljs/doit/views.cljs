@@ -30,9 +30,8 @@
         content (reagent/atom (:content @todo))]
     (fn []
       [:div
-       [:input {:type "text"
+       [:input.todo {:type "text"
                 :value @content
-                :display "inline block"
                 :on-change (fn [val]
                              (reset! content (.-value (.-target val)))
                              (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}]])))
@@ -45,7 +44,7 @@
        [:div.remaining-todos
         (for [todo @todos]
           ^{:key (:id todo)}
-          [:div
+          [:div.todo-row
            [:i.check-box.far.fa-square
             {:on-click (fn [args] (rf/dispatch [::events/mark-done (:id todo)]))}]
            [editable-todo (:id todo)]])]])))
@@ -58,7 +57,7 @@
        [:div.completed-todos
         (for [todo @todos]
           ^{:key (:id todo)}
-          [:div
+          [:div.todo-row
            [:i.check-box.far.fa-check-square
             {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
            [editable-todo (:id todo)]])]])))
