@@ -3,6 +3,11 @@
 
 (defn registrations []
   (rf/reg-sub
+   ::todo
+   (fn [db [_ id]]
+     (get-in db [:todos id])))
+
+  (rf/reg-sub
    ::todos
    (fn [db _]
      (vals (:todos db))))

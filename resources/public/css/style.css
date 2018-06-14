@@ -30,7 +30,28 @@ hr {
     cursor: pointer;
 }
 
-.completed-todos{
+.completed-todos * {
     text-decoration: line-through;
     color: #808080;
+}
+
+.todo-row * {
+    display: inline-block;
+}
+
+input.todo {
+    border: 0px solid;
+    width: 95%;
+    background-color: transparent;
+    text-decoration: inherit;
+}
+
+input.todo:hover {
+    outline: none;
+    background-color: #e6e6e6;
+}
+
+input.todo:focus {
+    outline: none;
+    background-color: #d3d3d3;
 }
