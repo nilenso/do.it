@@ -26,14 +26,13 @@
         "Add todo"]])))
 
 (defn editable-todo [id]
-  (let [todo (rf/subscribe [::subs/todo id])
-        content (reagent/atom (:content @todo))]
+  (let [todo (rf/subscribe [::subs/todo id])]
     (fn []
       [:input.todo {:type      "text"
-                    :value     @content
+                    :value     (:content @todo)
                     :on-change (fn [val]
-                                 (reset! content (.-value (.-target val)))
-                                 (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}])))
+                                 (let [new-content (.-value (.-target val))]
+                                   (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
 
 (defn remaining-todos-panel []
   (let [todos (rf/subscribe [::subs/remaining-todos])]
