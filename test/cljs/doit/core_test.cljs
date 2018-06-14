@@ -69,16 +69,6 @@
        (is (= 1 (count @completed-todos)))
        (is (contains? (set @remaining-todos) new-todo)))
 
-     (testing "remaining-todos-panel renders all remaining todos"
-       (let [rendered-hiccup ((views/remaining-todos-panel))]
-         (is (clojure.set/subset? (set (map :content @remaining-todos))
-                                  (set (flatten rendered-hiccup))))))
-
-     (testing "completed-todos-panel renders all completed todos"
-       (let [rendered-hiccup ((views/completed-todos-panel))]
-         (is (clojure.set/subset? (set (map :content @completed-todos))
-                                  (set (flatten rendered-hiccup))))))
-
      (testing "signout removes auth token and todos"
        (rf/dispatch [::auth/sign-out])
        (is (= nil @auth-token))
