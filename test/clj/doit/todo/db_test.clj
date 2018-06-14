@@ -27,9 +27,19 @@
 
 (deftest update-todo-query-test
   (testing "User can update a todo"
-    (let [params {:content "test todo"}
-          todo (todo-db/add-todo! params)
+    (let [params         {:content "test todo"}
+          todo           (todo-db/add-todo! params)
           updated-params {:content "new todo" :done true :id (:id todo)}
-          response (todo-db/update-todo! updated-params)]
+          response       (todo-db/update-todo! updated-params)]
       (is (= updated-params
              (select-keys response (keys updated-params)))))))
+
+(deftest delete-todo-query-test
+  (testing "User can delete a todo"
+    (let [{:keys [id]} (todo-db/add-todo! {:content "some content"})
+          response     (todo-db/delete-todo! id)]
+      (is (= 1 (first response)))))
+
+  (testing "Deleting a non-existent todo deletes nothing"
+    (let [response (todo-db/delete-todo! 10)]
+      (is (= 0 (first response))))))

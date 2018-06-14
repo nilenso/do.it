@@ -4,4 +4,5 @@
 
 (def routes {"" {:post     (mw/wrap-token handler/create-todo)
                  :get      (mw/wrap-token handler/list-todos)
-                 [:id "/"] {:put (mw/wrap-token handler/update-todo)}}})
+                 [:id "/"] {:put    (mw/wrap-token handler/update-todo)
+                            :delete (mw/wrap-token handler/delete-todo)}}})
