@@ -94,6 +94,22 @@
                   :on-success      [::update-todo-success]
                   :on-failure      [::request-failed]}}))
 
+(defn delete-todo-success
+  [db [_ id]]
+  (update-in db [:todos] dissoc id))
+
+(defn delete-todo
+  [cofx [_ id]]
+  (let [url (str todo-url id "/")]
+    {:http-xhrio {:method          :delete
+                  :uri             url
+                  :timeout         8000
+                  :headers         (token-headers-map cofx)
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [::delete-todo-success id]
+                  :on-failure      [::request-failed]}}))
+
 (defn mark-done
   [{:keys [db]} [_ id]]
   (let [todo         (get-in db [:todos id])
@@ -156,6 +172,14 @@
   (rf/reg-event-fx
    ::mark-undone
    mark-undone)
+
+  (rf/reg-event-db
+   ::delete-todo-success
+   delete-todo-success)
+
+  (rf/reg-event-fx
+   ::delete-todo
+   delete-todo)
 
   (rf/reg-event-db
    ::initialize-db
