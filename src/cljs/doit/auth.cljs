@@ -1,7 +1,6 @@
 (ns doit.auth
   (:refer-clojure :exclude [subs])
-  (:require [cljs.core.async :refer [put! >! <! take chan buffer ]]
-            [doit.config :as config]
+  (:require [doit.config :as config]
             [doit.subs :as subs]
             [doit.events :as events]
             [re-frame.core :as rf]

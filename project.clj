@@ -68,7 +68,8 @@
      :source-paths ["src/cljs"]
      :compiler     {:main            doit.core
                     :output-to       "resources/public/js/compiled/app.js"
-                    :optimizations   :advanced
+                    :optimizations   :simple
+                    :parallel-build  :true
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}
 

@@ -8,22 +8,16 @@
             [doit.views :as views]
             [doit.config :as config]))
 
-
-(defn dev-setup []
-  (when config/debug?
-    (enable-console-print!)
-    (println "dev mode")))
-
 (defn mount-root []
   (re-frame/clear-subscription-cache!)
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
+  (enable-console-print!)
   (events/init)
   (subs/init)
-  (auth/init)
   (re-frame/dispatch-sync [::events/initialize-db])
   (re-frame/dispatch-sync [::events/get-client-id])
-  (dev-setup)
+  (auth/init)
   (mount-root))
