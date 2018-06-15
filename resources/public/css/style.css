@@ -55,3 +55,12 @@ input.todo:focus {
     outline: none;
     background-color: #d3d3d3;
 }
+
+.delete-btn {
+    opacity: .3;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    opacity: .7;
+}

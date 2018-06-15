@@ -34,4 +34,4 @@
     (let [response (handler request)]
       (merge response
              {:headers {"Content-Type" "application/json"}
-              :body (json/write-str (:body response))}))))
+              :body    (json/write-str (:body response))}))))

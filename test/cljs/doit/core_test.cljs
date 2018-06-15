@@ -69,6 +69,10 @@
        (is (= 1 (count @completed-todos)))
        (is (contains? (set @remaining-todos) new-todo)))
 
+     (testing "user can delete a todo"
+       (rf/dispatch [::events/delete-todo-success (:id new-todo)])
+       (is (not (contains? (set (map :id @all-todos)) (:id new-todo)))))
+
      (testing "signout removes auth token and todos"
        (rf/dispatch [::auth/sign-out])
        (is (= nil @auth-token))

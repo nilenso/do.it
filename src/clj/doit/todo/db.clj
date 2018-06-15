@@ -19,3 +19,7 @@
 (defn list-todos
   []
   (jdbc/query (config/db) ["SELECT * FROM todo"]))
+
+(defn delete-todo!
+  [id]
+  (jdbc/delete! (config/db) :todo ["id = ?" id]))

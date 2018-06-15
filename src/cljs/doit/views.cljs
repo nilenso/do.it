@@ -26,14 +26,13 @@
         "Add todo"]])))
 
 (defn editable-todo [id]
-  (let [todo (rf/subscribe [::subs/todo id])
-        content (reagent/atom (:content @todo))]
+  (let [todo (rf/subscribe [::subs/todo id])]
     (fn []
       [:input.todo {:type      "text"
-                    :value     @content
+                    :value     (:content @todo)
                     :on-change (fn [val]
-                                 (reset! content (.-value (.-target val)))
-                                 (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}])))
+                                 (let [new-content (.-value (.-target val))]
+                                   (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
 
 (defn remaining-todos-panel []
   (let [todos (rf/subscribe [::subs/remaining-todos])]
@@ -44,8 +43,10 @@
         (for [todo @todos]
           ^{:key (:id todo)}
           [:div.todo-row
+           [:i.delete-btn.far.fa-trash-alt
+            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
            [:i.check-box.far.fa-square
-            {:on-click (fn [args] (rf/dispatch [::events/mark-done (:id todo)]))}]
+            {:on-click (fn [_] (rf/dispatch [::events/mark-done (:id todo)]))}]
            [editable-todo (:id todo)]])]])))
 
 (defn completed-todos-panel []
@@ -57,8 +58,10 @@
         (for [todo @todos]
           ^{:key (:id todo)}
           [:div.todo-row
+           [:i.delete-btn.far.fa-trash-alt
+            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
            [:i.check-box.far.fa-check-square
-            {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
+            {:on-click (fn [_] (rf/dispatch [::events/mark-undone (:id todo)]))}]
            [editable-todo (:id todo)]])]])))
 
 (defn todos-panel []
