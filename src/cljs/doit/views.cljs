@@ -43,8 +43,10 @@
         (for [todo @todos]
           ^{:key (:id todo)}
           [:div.todo-row
+           [:i.delete-btn.far.fa-trash-alt
+            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
            [:i.check-box.far.fa-square
-            {:on-click (fn [args] (rf/dispatch [::events/mark-done (:id todo)]))}]
+            {:on-click (fn [_] (rf/dispatch [::events/mark-done (:id todo)]))}]
            [editable-todo (:id todo)]])]])))
 
 (defn completed-todos-panel []
@@ -56,8 +58,10 @@
         (for [todo @todos]
           ^{:key (:id todo)}
           [:div.todo-row
+           [:i.delete-btn.far.fa-trash-alt
+            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
            [:i.check-box.far.fa-check-square
-            {:on-click (fn [args] (rf/dispatch [::events/mark-undone (:id todo)]))}]
+            {:on-click (fn [_] (rf/dispatch [::events/mark-undone (:id todo)]))}]
            [editable-todo (:id todo)]])]])))
 
 (defn todos-panel []
