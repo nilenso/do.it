@@ -12,7 +12,7 @@
 (defn create* [params]
   (-> params
       todo-db/add!
-      (select-keys [:content :id :done])
+      (select-keys [:content :id :done :list_id])
       (wrap-response 201)))
 
 (defn create! [request]
@@ -25,7 +25,7 @@
 (defn update* [updated]
   (-> updated
       todo-db/update!
-      (select-keys [:content :id :done])
+      (select-keys [:content :id :done :list_id])
       (wrap-response 200)))
 
 (defn update! [request]
@@ -37,13 +37,13 @@
       (let [parsed-body (s/conform ::spec/update-params body)]
         (if (= parsed-body ::s/invalid)
           (wrap-response {:error (s/explain-str ::spec/update-params body)} 400)
-          (let [updated-todo (select-keys (merge todo parsed-body) [:content :id :done])]
+          (let [updated-todo (select-keys (merge todo parsed-body) [:content :id :done :list_id])]
             (update* updated-todo)))))))
 
 (defn list-all [request]
   (let [todos (todo-db/list-all)]
     (wrap-response
-     (map #(select-keys % [:content :id :done]) todos)
+     (map #(select-keys % [:content :id :done :list_id]) todos)
      200)))
 
 (defn delete! [request]

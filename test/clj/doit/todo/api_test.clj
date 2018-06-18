@@ -14,17 +14,17 @@
 (defn todo-api-end-point []
   (str (test-utils/api-end-point) "todo/"))
 
-(defn create-todo [content token]
-  (-> (test-utils/post-api-call (todo-api-end-point) {:content content} token)
+(defn create-todo [params token]
+  (-> (test-utils/post-api-call (todo-api-end-point) params token)
       (update :body test-utils/parse-body)))
 
-(defn update-todo [id content token]
+(defn update-todo [id params token]
   (let [url (str (todo-api-end-point) id "/")]
     (-> @(http/put
           url
           {:headers {"Content-Type"  "application/json"
                      "Authorization" (str "Bearer " token)}
-           :body    (json/write-str content)})
+           :body    (json/write-str params)})
         (update :body test-utils/parse-body))))
 
 (defn delete-todo [id token]
@@ -49,16 +49,16 @@
 (deftest test-todo-crud
   (let [token           "tk1"
         user            (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
-        content1        "Test Todo 1"
-        content2        "Test Todo 2"
+        content1        {:content "Test Todo 1" :list_id 0}
+        content2        {:content "Test Todo 2" :list_id 0}
         todo-response-1 (create-todo content1 token)
         todo-response-2 (create-todo content2 token)]
 
     (testing "user can create a todo"
       (is (= (:status todo-response-1) 201))
       (is (= (:status todo-response-2) 201))
-      (is (= (set (keys (:body todo-response-1))) #{:content :id :done}))
-      (is (= (get-in todo-response-2 [:body :content]) content2)))
+      (is (= (set (keys (:body todo-response-1))) #{:content :id :done :list_id}))
+      (is (= (get-in todo-response-2 [:body :content]) (:content content2))))
 
     (testing "user gets error on creating todo with bad keys"
       (let [{:keys [status]} (test-utils/post-api-call (todo-api-end-point) {:ody "Test Todo"} token)]
@@ -72,15 +72,15 @@
       (let [list-response (list-todos token)]
         (is (= 200 (:status list-response)))
         (is (= 2 (count (:body list-response))))
-        (is (= #{content1 content2}
+        (is (= (set (map :content [content1 content2]))
                (set (map :content (:body list-response)))))))
 
     (let [id-1 (get-in todo-response-1 [:body :id])]
       (testing "user can update an added todo"
-        (let [updated-data    {:content "new content" :done true :id id-1}
+        (let [updated-data    {:content "new content" :done true :id id-1 :list_id 0}
               update-response (update-todo id-1 updated-data token)]
           (is (= 200 (:status update-response)))
-          (is (= (set (keys (:body update-response))) #{:content :id :done}))
+          (is (= (set (keys (:body update-response))) #{:content :id :done :list_id}))
           (is (= (:done updated-data) (get-in update-response [:body :done])))
           (is (= (:content updated-data) (get-in update-response [:body :content])))))
 
