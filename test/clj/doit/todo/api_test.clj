@@ -108,7 +108,7 @@
   (testing "user can delete a todo"
     (let [token           "tk1"
           user            (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
-          {:keys [id]}    (todo-db/add-todo! {:content "some value"})
+          {:keys [id]}    (todo-db/add! {:content "some value"})
           delete-response (delete-todo id token)
           list-response   (list-todos token)]
       (is (= 204 (:status delete-response)))

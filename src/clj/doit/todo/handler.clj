@@ -11,7 +11,7 @@
 
 (defn create-todo* [params]
   (-> params
-      todo-db/add-todo!
+      todo-db/add!
       (select-keys [:content :id :done])
       (wrap-response 201)))
 
@@ -24,14 +24,14 @@
 
 (defn update-todo* [updated-todo]
   (-> updated-todo
-      todo-db/update-todo!
+      todo-db/update!
       (select-keys [:content :id :done])
       (wrap-response 200)))
 
 (defn update-todo [request]
   (let [body (:body request)
         id   (Integer. (get-in request [:route-params :id]))
-        todo (todo-db/retrieve-todo id)]
+        todo (todo-db/retrieve id)]
     (if-not todo
       (wrap-response {:error (format "todo with id %s not found" id)} 404)
       (let [parsed-body (s/conform ::spec/update-params body)]
@@ -41,12 +41,12 @@
             (update-todo* updated-todo)))))))
 
 (defn list-todos [request]
-  (let [todos (todo-db/list-todos)]
+  (let [todos (todo-db/list-all)]
     (wrap-response
      (map #(select-keys % [:content :id :done]) todos)
      200)))
 
 (defn delete-todo [request]
   (let [id (Integer. (get-in request [:route-params :id]))]
-    (todo-db/delete-todo! id)
+    (todo-db/delete! id)
     {:status 204}))
