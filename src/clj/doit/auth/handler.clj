@@ -15,4 +15,4 @@
 
 (defn logout [request]
   (let [user-id (get request :user-id)]
-    (user-db/update-user! {:id user-id :token nil :token_exp nil})))
+    (user-db/update! {:id user-id :token nil :token_exp nil})))

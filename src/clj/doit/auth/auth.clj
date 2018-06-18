@@ -18,13 +18,13 @@
          (= status 200)
          (util/not-expired? (Integer. (:exp parsed-body)))
          (= (:aud parsed-body) (config/google-client-id)))
-      (user-db/create-or-update-user! {:email (:email parsed-body)
+      (user-db/create-or-update! {:email (:email parsed-body)
                                        :token token
                                        :token_exp (Integer. (:exp parsed-body))}))))
 
 (defn handle-token [token]
   "Validates the authorization token and returns the corresponding user if
    token is valid, returns `nil` otherwise. Creates a new user if one doesn't exist already."
-  (if-let [user (user-db/get-user-by-token token)]
+  (if-let [user (user-db/get-by-token token)]
     (when (util/not-expired? (:token_exp user)) user)
     (handle-new-token token)))

@@ -62,7 +62,7 @@
 
 (deftest test-todo-crud
   (let [token           "tk1"
-        user            (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
+        user            (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
         content1        "Test Todo 1"
         content2        "Test Todo 2"
         todo-response-1 (create-todo content1 token)
@@ -107,7 +107,7 @@
 (deftest test-delete-todo
   (testing "user can delete a todo"
     (let [token           "tk1"
-          user            (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
+          user            (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
           {:keys [id]}    (todo-db/add! {:content "some value"})
           delete-response (delete-todo id token)
           list-response   (list-todos token)]
@@ -117,7 +117,7 @@
 (deftest test-logout
   (testing "user can logout"
     (let [token           "tk1"
-          user            (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
+          user            (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
           logout-response (logout token)
           list-response   (list-todos token)]
       (is (= 200 (:status logout-response)))
@@ -126,6 +126,6 @@
 (deftest test-update-non-existant
   (testing "user cannot update a non existant todo"
     (let [token "tk1"
-          user (user-db/create-user! {:email "test@nilenso.com" :token token :token_exp 1802444800})
+          user (user-db/create! {:email "test@nilenso.com" :token token :token_exp 1802444800})
           {:keys [status]} (update-todo 1 {:content "new todo" :done false :id 1} token)]
       (is (= 404 status)))))
