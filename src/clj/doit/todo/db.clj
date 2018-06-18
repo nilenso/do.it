@@ -2,24 +2,24 @@
   (:require [clojure.java.jdbc :as jdbc]
             [doit.config :as config]))
 
-(defn add-todo!
+(defn add!
   [values]
   (-> (jdbc/insert! (config/db) :todo values)
       first))
 
-(defn update-todo!
+(defn update!
   [todo]
   (jdbc/update! (config/db) :todo todo ["id = ?" (:id todo)])
   todo)
 
-(defn retrieve-todo
+(defn retrieve
   [id]
   (first (jdbc/query (config/db) ["SELECT * FROM todo WHERE id = ?" id])))
 
-(defn list-todos
+(defn list-all
   []
   (jdbc/query (config/db) ["SELECT * FROM todo"]))
 
-(defn delete-todo!
+(defn delete!
   [id]
   (jdbc/delete! (config/db) :todo ["id = ?" id]))
