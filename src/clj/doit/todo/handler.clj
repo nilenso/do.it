@@ -9,26 +9,26 @@
   {:status status
    :body data})
 
-(defn create-todo* [params]
+(defn create* [params]
   (-> params
       todo-db/add!
       (select-keys [:content :id :done])
       (wrap-response 201)))
 
-(defn create-todo [request]
-  (let [body   (:body request)
+(defn create! [request]
+  (let [body        (:body request)
         parsed-body (s/conform ::spec/create-params body)]
     (if (= parsed-body ::s/invalid)
       (wrap-response {:error (s/explain-str ::spec/create-params body)} 400)
-      (create-todo* parsed-body))))
+      (create* parsed-body))))
 
-(defn update-todo* [updated-todo]
-  (-> updated-todo
+(defn update* [updated]
+  (-> updated
       todo-db/update!
       (select-keys [:content :id :done])
       (wrap-response 200)))
 
-(defn update-todo [request]
+(defn update! [request]
   (let [body (:body request)
         id   (Integer. (get-in request [:route-params :id]))
         todo (todo-db/retrieve id)]
@@ -38,15 +38,15 @@
         (if (= parsed-body ::s/invalid)
           (wrap-response {:error (s/explain-str ::spec/update-params body)} 400)
           (let [updated-todo (select-keys (merge todo parsed-body) [:content :id :done])]
-            (update-todo* updated-todo)))))))
+            (update* updated-todo)))))))
 
-(defn list-todos [request]
+(defn list-all [request]
   (let [todos (todo-db/list-all)]
     (wrap-response
      (map #(select-keys % [:content :id :done]) todos)
      200)))
 
-(defn delete-todo [request]
+(defn delete! [request]
   (let [id (Integer. (get-in request [:route-params :id]))]
     (todo-db/delete! id)
     {:status 204}))
