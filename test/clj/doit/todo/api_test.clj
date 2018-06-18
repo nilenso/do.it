@@ -4,33 +4,19 @@
              [doit.todo.db :as todo-db]
              [doit.user.db :as user-db]
              [doit.util :as util]
+             [doit.test-utils :as test-utils]
              [org.httpkit.client :as http]
-             [clojure.data.json :as json]
-             [doit.config :as config]))
+             [clojure.data.json :as json]))
 
 (use-fixtures :once fixtures/load-config fixtures/migrate-destroy-db fixtures/start-stop-server)
 (use-fixtures :each fixtures/isolate-db)
 
-(defn api-end-point []
-  (let [{:keys [host port]} (config/webserver)]
-    (format "http://%s:%s/api/" host port)))
-
 (defn todo-api-end-point []
-  (str (api-end-point) "todo/"))
-
-(defn post-api-call [url body token]
-  @(http/post
-    url
-    {:headers {"Content-Type"  "application/json"
-               "Authorization" (str "Bearer " token)}
-     :body    (json/write-str body)}))
-
-(defn parse-body [body]
-  (json/read-str body :key-fn keyword))
+  (str (test-utils/api-end-point) "todo/"))
 
 (defn create-todo [content token]
-  (-> (post-api-call (todo-api-end-point) {:content content} token)
-      (update :body parse-body)))
+  (-> (test-utils/post-api-call (todo-api-end-point) {:content content} token)
+      (update :body test-utils/parse-body)))
 
 (defn update-todo [id content token]
   (let [url (str (todo-api-end-point) id "/")]
@@ -39,7 +25,7 @@
           {:headers {"Content-Type"  "application/json"
                      "Authorization" (str "Bearer " token)}
            :body    (json/write-str content)})
-        (update :body parse-body))))
+        (update :body test-utils/parse-body))))
 
 (defn delete-todo [id token]
   (let [url (str (todo-api-end-point) id "/")]
@@ -52,13 +38,13 @@
   (-> @(http/get
         (todo-api-end-point)
         {:headers {"Authorization" (str "Bearer " token)}})
-      (update :body parse-body)))
+      (update :body test-utils/parse-body)))
 
 (defn logout [token]
   @(http/post
-    (str (api-end-point) "auth/logout/")
-    {:headers {"Content-Type" "application/json"
-                     "Authorization" (str "Bearer " token)}}))
+    (str (test-utils/api-end-point) "auth/logout/")
+    {:headers {"Content-Type"  "application/json"
+               "Authorization" (str "Bearer " token)}}))
 
 (deftest test-todo-crud
   (let [token           "tk1"
@@ -75,7 +61,7 @@
       (is (= (get-in todo-response-2 [:body :content]) content2)))
 
     (testing "user gets error on creating todo with bad keys"
-      (let [{:keys [status]} (post-api-call (todo-api-end-point) {:ody "Test Todo"} token)]
+      (let [{:keys [status]} (test-utils/post-api-call (todo-api-end-point) {:ody "Test Todo"} token)]
         (is (= status 400))))
 
     (testing "user with bad token cannot access todos"
@@ -125,7 +111,7 @@
 
 (deftest test-update-non-existant
   (testing "user cannot update a non existant todo"
-    (let [token "tk1"
-          user (user-db/create! {:email "test@nilenso.com" :token token :token_exp 1802444800})
+    (let [token            "tk1"
+          user             (user-db/create! {:email "test@nilenso.com" :token token :token_exp 1802444800})
           {:keys [status]} (update-todo 1 {:content "new todo" :done false :id 1} token)]
       (is (= 404 status)))))
