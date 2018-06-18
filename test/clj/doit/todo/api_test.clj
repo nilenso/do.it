@@ -49,15 +49,15 @@
 (deftest test-todo-crud
   (let [token           "tk1"
         user            (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
-        content1        {:content "Test Todo 1" :list_id 0}
-        content2        {:content "Test Todo 2" :list_id 0}
+        content1        {:content "Test Todo 1" :listid 0}
+        content2        {:content "Test Todo 2" :listid 0}
         todo-response-1 (create-todo content1 token)
         todo-response-2 (create-todo content2 token)]
 
     (testing "user can create a todo"
       (is (= (:status todo-response-1) 201))
       (is (= (:status todo-response-2) 201))
-      (is (= (set (keys (:body todo-response-1))) #{:content :id :done :list_id}))
+      (is (= (set (keys (:body todo-response-1))) #{:content :id :done :listid}))
       (is (= (get-in todo-response-2 [:body :content]) (:content content2))))
 
     (testing "user gets error on creating todo with bad keys"
@@ -77,10 +77,10 @@
 
     (let [id-1 (get-in todo-response-1 [:body :id])]
       (testing "user can update an added todo"
-        (let [updated-data    {:content "new content" :done true :id id-1 :list_id 0}
+        (let [updated-data    {:content "new content" :done true :id id-1 :listid 0}
               update-response (update-todo id-1 updated-data token)]
           (is (= 200 (:status update-response)))
-          (is (= (set (keys (:body update-response))) #{:content :id :done :list_id}))
+          (is (= (set (keys (:body update-response))) #{:content :id :done :listid}))
           (is (= (:done updated-data) (get-in update-response [:body :done])))
           (is (= (:content updated-data) (get-in update-response [:body :content])))))
 

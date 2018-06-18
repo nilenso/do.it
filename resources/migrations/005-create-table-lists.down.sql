@@ -1,4 +1,4 @@
 ALTER TABLE todo
-      DROP COLUMN list_id;
+      DROP COLUMN listid;
 
 DROP TABLE todo_list;

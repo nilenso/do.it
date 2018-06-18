@@ -12,7 +12,7 @@
           response (todo-db/add! params)]
       (is (= (:content response) (:content params)))
       (is (= (:done response) false))
-      (is (= (set (keys response)) #{:content :id :created_at :done :list_id})))))
+      (is (= (set (keys response)) #{:content :id :created_at :done :listid})))))
 
 (deftest list-todos-query-test
   (testing "User can list the todos"
@@ -23,7 +23,7 @@
           res        (todo-db/list-all)]
       (is (= (count res) 2))
       (is (= (:content (first res)) (:content test-todo1)))
-      (is (= (set (keys (first res))) #{:content :id :created_at :done :list_id})))))
+      (is (= (set (keys (first res))) #{:content :id :created_at :done :listid})))))
 
 (deftest update-todo-query-test
   (testing "User can update a todo"

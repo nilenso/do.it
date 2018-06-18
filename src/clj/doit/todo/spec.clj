@@ -5,15 +5,15 @@
 
 (s/def ::id int?)
 
-(s/def ::list_id int?)
+(s/def ::listid int?)
 
 (s/def ::done boolean?)
 
-(s/def ::create-params (s/keys :req-un [::content ::list_id]))
+(s/def ::create-params (s/keys :req-un [::content ::listid]))
 
-(s/def ::update-params (s/keys :req-un [::content ::done ::id ::list_id]))
+(s/def ::update-params (s/keys :req-un [::content ::done ::id ::listid]))
 
-(s/def ::todo-out (s/keys :req-un [::content ::id ::done ::list_id]))
+(s/def ::todo-out (s/keys :req-un [::content ::id ::done ::listid]))
 
 (s/def ::mark-done-in (s/keys :req-un [::id]))
 
