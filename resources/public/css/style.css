@@ -1,11 +1,15 @@
+
+/*----- common start -----*/
 .page {
     height: 100%;
     margin: 5em auto;
     width: 800px;
 }
 
-.todo-item {
-    color: #484848
+.lists-panel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 h1 {
@@ -17,13 +21,27 @@ hr {
     color: #D3D3D3
 }
 
-.btn {
-    outline: none;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    margin-right: 5px;
+.sign-out-panel {
+    text-align: center;
 }
+
+/*----- common end -------*/
+
+/*----- todo-panel start -*/
+.list-box {
+    border: 1px solid #0f0f0f;
+    margin: 20px;
+    padding: 20px;
+    width: 300px;
+    border-radius: 3px;
+    background-color: #f1f3f4;
+}
+
+.todo-item {
+    color: #484848
+}
+
+
 
 .check-box {
     margin: 5px;

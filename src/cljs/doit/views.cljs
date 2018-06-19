@@ -11,17 +11,17 @@
   [:div.header
    [:h1 "DO•IT"]])
 
-(defn add-todo-form []
+(defn add-todo-form [listid]
   (let [content (reagent/atom "")]
     (fn []
       [:div.form
-       [:input {:type "text"
-                :value @content
+       [:input {:type      "text"
+                :value     @content
                 :on-change (fn [val]
                              (reset! content (.-value (.-target val))))}]
-       [:button {:type "input"
+       [:button {:type     "input"
                  :on-click (fn [args]
-                             (rf/dispatch [::events/add-todo {:content @content}])
+                             (rf/dispatch [::events/add-todo {:content @content :listid listid}])
                              (reset! content ""))}
         "Add todo"]])))
 
@@ -34,48 +34,51 @@
                                  (let [new-content (.-value (.-target val))]
                                    (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
 
-(defn remaining-todos-panel []
-  (let [todos (rf/subscribe [::subs/remaining-todos])]
+(defn remaining-todos-panel [listid]
+  (let [todos (rf/subscribe [::subs/remaining-todos listid])]
     (fn []
-      [:div.remaining-todos-panel
-       [:h3 {:style {:text-align "center"}} "Tasks to do"]
-       [:div.remaining-todos
-        (for [todo @todos]
-          ^{:key (:id todo)}
-          [:div.todo-row
-           [:i.delete-btn.far.fa-trash-alt
-            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
-           [:i.check-box.far.fa-square
-            {:on-click (fn [_] (rf/dispatch [::events/mark-done (:id todo)]))}]
-           [editable-todo (:id todo)]])]])))
+      [:div.remaining-todos
+       (for [todo @todos]
+         ^{:key (:id todo)}
+         [:div.todo-row
+          [:i.delete-btn.far.fa-trash-alt
+           {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
+          [:i.check-box.far.fa-square
+           {:on-click (fn [_] (rf/dispatch [::events/mark-done (:id todo)]))}]
+          [editable-todo (:id todo)]])])))
 
-(defn completed-todos-panel []
-  (let [todos (rf/subscribe [::subs/completed-todos])]
+(defn completed-todos-panel [listid]
+  (let [todos (rf/subscribe [::subs/completed-todos listid])]
     (fn []
-      [:div.completed-todos-panel
-       [:h3 {:style {:text-align "center"}} "Tasks completed"]
-       [:div.completed-todos
-        (for [todo @todos]
-          ^{:key (:id todo)}
-          [:div.todo-row
-           [:i.delete-btn.far.fa-trash-alt
-            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
-           [:i.check-box.far.fa-check-square
-            {:on-click (fn [_] (rf/dispatch [::events/mark-undone (:id todo)]))}]
-           [editable-todo (:id todo)]])]])))
+      [:div.completed-todos
+       (for [todo @todos]
+         ^{:key (:id todo)}
+         [:div.todo-row
+          [:i.delete-btn.far.fa-trash-alt
+           {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
+          [:i.check-box.far.fa-check-square
+           {:on-click (fn [_] (rf/dispatch [::events/mark-undone (:id todo)]))}]
+          [editable-todo (:id todo)]])])))
 
-(defn todos-panel []
+(defn todos-panel [listid]
   [:div
-   [:a {:href "#"
-        :on-click (fn [_] (auth/sign-out))}
-    "Sign Out"]
-   [add-todo-form]
+   [remaining-todos-panel listid]
    [:br]
    [:hr]
-   [remaining-todos-panel]
+   [completed-todos-panel listid]
    [:br]
    [:hr]
-   [completed-todos-panel]])
+   [add-todo-form listid]])
+
+(defn lists-panel []
+  (let [todo-lists (rf/subscribe [::subs/todo-lists])]
+    (fn []
+      [:div.lists-panel
+       (for [todo-list @todo-lists]
+         ^{:key (:id todo-list)}
+         [:div.list-box
+          [:h4.list-name (:name todo-list)]
+          [todos-panel (:id todo-list)]])])))
 
 (defn sign-in-panel []
   [:div.sign-in-panel
@@ -84,6 +87,12 @@
     [:img.sign-in-btn-img {:src "/images/btn_google_signin.png"
                            :alt "sign in with Google"}]]])
 
+(defn sign-out-panel []
+  [:div.sign-out-panel
+   [:a {:href "#"
+        :on-click (fn [_] (auth/sign-out))}
+    "Sign Out"]])
+
 (defn main-panel []
   (let [auth-token (rf/subscribe [::subs/auth-token])]
     (fn []
@@ -91,4 +100,6 @@
        [header]
        (if-not @auth-token
          [sign-in-panel]
-         [todos-panel])])))
+         [:div
+          [sign-out-panel]
+          [lists-panel]])])))
