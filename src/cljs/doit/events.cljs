@@ -135,6 +135,22 @@
                 :on-success      [::get-todo-lists-success]
                 :on-failure      [::request-failed]}})
 
+(defn add-todo-list-success
+  [db [_ todo-list]]
+  (assoc-in db [:todo-lists (:id todo-list)] todo-list))
+
+(defn add-todo-list
+  [cofx [_ vals]]
+  {:http-xhrio {:method          :post
+                :uri             todo-list-url
+                :timeout         8000
+                :params          vals
+                :headers         (token-headers-map cofx)
+                :format          (ajax/json-request-format)
+                :response-format (ajax/json-response-format {:keywords? true})
+                :on-success      [::add-todo-list-success]
+                :on-failure      [::request-failed]}})
+
 (defn registrations []
   (rf/reg-event-db
    ::request-failed
@@ -202,6 +218,15 @@
   (rf/reg-event-fx
    ::get-todo-lists
    get-todo-lists)
+
+  (rf/reg-event-db
+   ::add-todo-list-success
+   [db-spec-inspector]
+   add-todo-list-success)
+
+  (rf/reg-event-fx
+   ::add-todo-list
+   add-todo-list)
 
   (rf/reg-event-db
    ::initialize-db

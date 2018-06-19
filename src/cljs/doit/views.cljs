@@ -70,15 +70,31 @@
    [:hr]
    [add-todo-form listid]])
 
+(defn add-todo-list-form []
+  (let [name (reagent/atom "")]
+    (fn []
+      [:div.form
+       [:input {:type      "text"
+                :value     @name
+                :on-change (fn [val]
+                             (reset! name (.-value (.-target val))))}]
+       [:button {:type     "input"
+                 :on-click (fn [args]
+                             (rf/dispatch [::events/add-todo-list {:name @name}])
+                             (reset! name ""))}
+        "Add Todo List"]])))
+
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
     (fn []
-      [:div.lists-panel
-       (for [todo-list @todo-lists]
-         ^{:key (:id todo-list)}
-         [:div.list-box
-          [:h4.list-name (:name todo-list)]
-          [todos-panel (:id todo-list)]])])))
+      [:div
+       [add-todo-list-form]
+       [:div.lists-panel
+        (for [todo-list @todo-lists]
+          ^{:key (:id todo-list)}
+          [:div.list-box
+           [:h4.list-name (:name todo-list)]
+           [todos-panel (:id todo-list)]])]])))
 
 (defn sign-in-panel []
   [:div.sign-in-panel

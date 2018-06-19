@@ -30,6 +30,7 @@
    ;; Assuming http requests made by ::get-todos, ::add-todo succeeds and
    ;; they call the corresponding success events
    (let [backend-lists   [{:id 0 :name "default"}]
+         new-list        {:id 1 :name "new list"}
          backend-todos   [{:content "test todo 1" :done true :id 1 :listid 0}
                           {:content "test todo 2" :done false :id 2 :listid 0}]
          new-todo        {:content "new todo" :done false :id 3 :listid 0}
@@ -51,6 +52,11 @@
      (testing "User can fetch todos from backend"
        (rf/dispatch [::events/get-todos-success backend-todos])
        (is (= backend-todos (vec @all-todos))))
+
+     (testing "User can create a new todo list"
+       (rf/dispatch [::events/add-todo-list-success new-list])
+       (is (= 2 (count @todo-lists)))
+       (is (contains? (set @todo-lists) new-list)))
 
      (testing "User can add a new todo"
        (rf/dispatch [::events/add-todo-success new-todo])
