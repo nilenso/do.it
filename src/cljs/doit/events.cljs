@@ -4,7 +4,7 @@
             [day8.re-frame.http-fx]
             [ajax.core :as ajax]
             [doit.spec :as spec]
-            [doit.utils :as util]
+            [doit.util :as util]
             [clojure.spec.alpha :as s]
             [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
