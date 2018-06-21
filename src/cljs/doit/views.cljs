@@ -16,24 +16,35 @@
   (let [content (reagent/atom "")]
     (fn []
       [:div.add-object
-       [:input {:type      "text"
-                :value     @content
-                :on-change (fn [val]
-                             (reset! content (.-value (.-target val))))}]
+       [:input {:type        "text"
+                :placeholder "Enter a new todo..."
+                :value       @content
+                :on-change   (fn [val]
+                               (reset! content (.-value (.-target val))))}]
        [:button {:type     "input"
                  :on-click (fn [args]
                              (rf/dispatch [::events/add-todo {:content @content :listid listid}])
                              (reset! content ""))}
         [:i {:class "fas fa-plus"}]]])))
 
+(defn set-todo-height [id]
+  (when-let [parent-element (.getElementById js/document (str "todo-" id))]
+    ;; Change height of the text
+    (set! (.-height (.-style parent-element)) "auto")
+    (let [new-height (.-scrollHeight parent-element)]
+      (prn new-height)
+      (set! (.-height (.-style parent-element)) (str new-height "px")))))
+
 (defn editable-todo [id]
   (let [todo (rf/subscribe [::subs/todo id])]
     (fn []
-      [:input.todo {:type      "text"
-                    :value     (:content @todo)
-                    :on-change (fn [val]
-                                 (let [new-content (.-value (.-target val))]
-                                   (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
+      (set-todo-height id)
+      [:textarea.todo {:type      "text"
+                       :id        (str "todo-" id)
+                       :value     (:content @todo)
+                       :on-change (fn [val]
+                                    (let [new-content (.-value (.-target val))]
+                                      (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
 
 (defn remaining-todos-panel [listid]
   (let [todos (rf/subscribe [::subs/remaining-todos listid])]
@@ -65,25 +76,23 @@
   [:div.list-items
    [remaining-todos-panel listid]
    [:hr]
-   [completed-todos-panel listid]
-   ])
+   [completed-todos-panel listid]])
 
 (defn add-todo-list []
   (let [name (reagent/atom "")]
     (fn []
-      [:div.add-todo-list.add-object 
-       [:input {:type      "text"
+      [:div.add-todo-list.add-object
+       [:input {:type        "text"
                 :placeholder "Enter list name..."
-                :value     @name
-                :on-change (fn [val]
-                             (reset! name (.-value (.-target val))))}]
+                :value       @name
+                :on-change   (fn [val]
+                               (reset! name (.-value (.-target val))))}]
        [:button {:type     "input"
                  :on-click (fn [args]
                              (rf/dispatch [::events/add-todo-list {:name @name}])
                              (reset! name ""))}
         [:i {:class "fas fa-plus"}]
-        "Add Todo List"
-        ]])))
+        "Add Todo List"]])))
 
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
@@ -101,13 +110,13 @@
 (defn sign-in-panel []
   [:div.sign-in-panel
    [:a {:href     "#"
-         :on-click auth/sign-in}
+        :on-click auth/sign-in}
     [:img.sign-in-btn-img {:src "/images/btn_google_signin.png"
                            :alt "sign in with Google"}]]])
 
 (defn sign-out-panel []
   [:div.sign-out-panel
-   [:a {:href "#"
+   [:a {:href     "#"
         :on-click (fn [_] (auth/sign-out))}
     "Sign Out"]])
 
@@ -115,10 +124,10 @@
   (let [auth-token (rf/subscribe [::subs/auth-token])]
     (fn []
       [:div
-      [header]
-      [:div.main-container
-       (if-not @auth-token
-         [sign-in-panel]
-         [:div
-          [sign-out-panel]
-          [lists-panel]])]])))
+       [header]
+       [:div.main-container
+        (if-not @auth-token
+          [sign-in-panel]
+          [:div
+           [sign-out-panel]
+           [lists-panel]])]])))

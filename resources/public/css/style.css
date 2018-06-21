@@ -1,8 +1,8 @@
 
 /*
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 common
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 */
 * {
     padding: 0;
@@ -28,7 +28,7 @@ input {
 .main-container {
     height: 100%;
     width: 64%;
-    
+
     margin: 3rem auto;
 
     background: white;
@@ -51,11 +51,11 @@ input {
 
 .add-object button {
     color: white;
-    
+
     background: #4a39ac;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
-} 
+}
 
 .add-object button i.fas.fa-plus {
     margin-right: 0.5rem;
@@ -75,16 +75,16 @@ hr {
 }
 
 /*
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 header
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 */
 .header {
     display: flex;
     justify-content: space-between;
 
     padding: 1rem;
-    
+
     border-bottom: 1px solid #e1e1e1;
     background: #00107c;
 }
@@ -92,7 +92,7 @@ header
 .header h1 {
     flex: 1;
     align-self: center;
-    
+
     font-weight: 300;
     color: white;
     text-align: center;
@@ -100,12 +100,12 @@ header
 
 .header a {
     align-self: center;
-    
+
     padding: 5px;
-    
+
     color: #00107c;
     text-decoration: none;
-    
+
     background: #fafafa;
     border: 1px solid #e1e1e1;
 }
@@ -120,9 +120,9 @@ header
 }
 
 /*
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 add todo list
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 */
 .add-todo-list {
     display: flex;
@@ -137,12 +137,12 @@ add todo list
 .add-todo-list > * {
     flex: 1;
     height: 40px;
-} 
+}
 
 /*
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 todo panel start
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 */
 
 .lists-panel {
@@ -165,7 +165,7 @@ todo panel start
     flex-direction: column;
     flex: 0 0 22rem;
     align-items: stretch;
-    
+
     margin: 2rem;
 
     border-radius: 0.25rem;
@@ -197,7 +197,7 @@ todo panel start
     display: flex;
     flex: 0;
     min-height: 56px;
-    
+
     background: rgba(0,16,124, 0.1);
 }
 
@@ -235,17 +235,21 @@ todo panel start
     flex: 1;
 }
 
-.list-items .item input {
+.list-items .item textarea {
     flex: 16;
     font-size: 1rem;
 
     background: none;
     margin-left: 0.25rem;
+    overflow:hidden;
+    border:none;
+    resize:none;
+    height:auto;
 }
 
 .list-items .item i {
     align-self: center;
-    text-align: center; 
+    text-align: center;
 }
 
 /*
@@ -268,13 +272,13 @@ todo panel start
 }
 
 /*
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 media queries
----------- ----- ----- ----- ----- ----- 
+---------- ----- ----- ----- ----- -----
 */
 
-@media only screen 
-  and (min-width: 320px) 
+@media only screen
+  and (min-width: 320px)
   and (max-width: 768px) {
 
     .main-container {
