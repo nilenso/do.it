@@ -9,12 +9,13 @@
 
 (defn header []
   [:div.header
-   [:h1 "DO•IT"]])
+   [:h1 "DO•IT"]
+   [:a {:href "#"} "sign-out"]])
 
-(defn add-todo-form [listid]
+(defn add-todo [listid]
   (let [content (reagent/atom "")]
     (fn []
-      [:div.form
+      [:div.add-object
        [:input {:type      "text"
                 :value     @content
                 :on-change (fn [val]
@@ -23,7 +24,7 @@
                  :on-click (fn [args]
                              (rf/dispatch [::events/add-todo {:content @content :listid listid}])
                              (reset! content ""))}
-        "Add todo"]])))
+        [:i {:class "fas fa-plus"}]]])))
 
 (defn editable-todo [id]
   (let [todo (rf/subscribe [::subs/todo id])]
@@ -37,10 +38,10 @@
 (defn remaining-todos-panel [listid]
   (let [todos (rf/subscribe [::subs/remaining-todos listid])]
     (fn []
-      [:div.remaining-todos
+      [:div.items-remaining
        (for [todo @todos]
          ^{:key (:id todo)}
-         [:div.todo-row
+         [:div.item
           [:i.delete-btn.far.fa-trash-alt
            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
           [:i.check-box.far.fa-square
@@ -50,31 +51,29 @@
 (defn completed-todos-panel [listid]
   (let [todos (rf/subscribe [::subs/completed-todos listid])]
     (fn []
-      [:div.completed-todos
+      [:div.items-completed
        (for [todo @todos]
          ^{:key (:id todo)}
-         [:div.todo-row
+         [:div.item
           [:i.delete-btn.far.fa-trash-alt
            {:on-click (fn [_] (rf/dispatch [::events/delete-todo (:id todo)]))}]
-          [:i.check-box.far.fa-check-square
+          [:i.check-box.fas.fa-check-square
            {:on-click (fn [_] (rf/dispatch [::events/mark-undone (:id todo)]))}]
           [editable-todo (:id todo)]])])))
 
 (defn todos-panel [listid]
-  [:div
+  [:div.list-items
    [remaining-todos-panel listid]
-   [:br]
    [:hr]
    [completed-todos-panel listid]
-   [:br]
-   [:hr]
-   [add-todo-form listid]])
+   ])
 
-(defn add-todo-list-form []
+(defn add-todo-list []
   (let [name (reagent/atom "")]
     (fn []
-      [:div.form
+      [:div.add-todo-list.add-object 
        [:input {:type      "text"
+                :placeholder "Enter list name..."
                 :value     @name
                 :on-change (fn [val]
                              (reset! name (.-value (.-target val))))}]
@@ -82,19 +81,22 @@
                  :on-click (fn [args]
                              (rf/dispatch [::events/add-todo-list {:name @name}])
                              (reset! name ""))}
-        "Add Todo List"]])))
+        [:i {:class "fas fa-plus"}]
+        "Add Todo List"
+        ]])))
 
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
     (fn []
       [:div
-       [add-todo-list-form]
+       [add-todo-list]
        [:div.lists-panel
         (for [todo-list @todo-lists]
           ^{:key (:id todo-list)}
-          [:div.list-box
-           [:h4.list-name (:name todo-list)]
-           [todos-panel (:id todo-list)]])]])))
+          [:div.list-container
+           [:h4.list-title (:name todo-list)]
+           [todos-panel (:id todo-list)]
+           [add-todo (:id todo-list)]])]])))
 
 (defn sign-in-panel []
   [:div.sign-in-panel
@@ -112,10 +114,11 @@
 (defn main-panel []
   (let [auth-token (rf/subscribe [::subs/auth-token])]
     (fn []
-      [:div.page
-       [header]
+      [:div
+      [header]
+      [:div.main-container
        (if-not @auth-token
          [sign-in-panel]
          [:div
           [sign-out-panel]
-          [lists-panel]])])))
+          [lists-panel]])]])))
