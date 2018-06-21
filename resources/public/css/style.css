@@ -235,6 +235,14 @@ todo panel start
     flex: 1;
 }
 
+.list-items .item i {
+    opacity: 0.7;
+}
+
+.list-items .item i:hover {
+    opacity: 1;
+}
+
 .list-items .item textarea {
     flex: 16;
     font-size: 1rem;
@@ -263,12 +271,8 @@ todo panel start
     opacity: 0.5;
 }
 
-.items-completed .item input{
+.items-completed .item textarea{
     text-decoration: line-through;
-}
-
-.items-completed .item i:hover{
-    opacity: 1;
 }
 
 /*

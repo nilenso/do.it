@@ -7,10 +7,18 @@
             [doit.config :as config]
             [doit.events :as events]))
 
+(defn sign-out-btn []
+  [:a {:href     "#"
+       :on-click (fn [_] (auth/sign-out))}
+   "Sign Out"])
+
 (defn header []
-  [:div.header
-   [:h1 "DO•IT"]
-   [:a {:href "#"} "sign-out"]])
+  (let [auth-token (rf/subscribe [::subs/auth-token])]
+    (fn []
+      [:div.header
+       [:h1 "DO•IT"]
+       (when @auth-token
+         [sign-out-btn])])))
 
 (defn add-todo [listid]
   (let [content (reagent/atom "")]
@@ -114,12 +122,6 @@
     [:img.sign-in-btn-img {:src "/images/btn_google_signin.png"
                            :alt "sign in with Google"}]]])
 
-(defn sign-out-panel []
-  [:div.sign-out-panel
-   [:a {:href     "#"
-        :on-click (fn [_] (auth/sign-out))}
-    "Sign Out"]])
-
 (defn main-panel []
   (let [auth-token (rf/subscribe [::subs/auth-token])]
     (fn []
@@ -128,6 +130,4 @@
        [:div.main-container
         (if-not @auth-token
           [sign-in-panel]
-          [:div
-           [sign-out-panel]
-           [lists-panel]])]])))
+          [lists-panel])]])))
