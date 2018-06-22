@@ -11,6 +11,10 @@
   []
   (jdbc/query (config/db) ["SELECT * FROM todo_list"]))
 
+(defn retrieve
+  [id]
+  (first (jdbc/query (config/db) ["SELECT * FROM todo_list WHERE id = ?" id])))
+
 (defn update!
   [todo-list]
   (jdbc/update! (config/db) :todo_list todo-list ["id = ?" (:id todo-list)])

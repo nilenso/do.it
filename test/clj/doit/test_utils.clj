@@ -14,5 +14,12 @@
                "Authorization" (str "Bearer " token)}
      :body    (json/write-str body)}))
 
+(defn put-api-call [url body token]
+  @(http/put
+    url
+    {:headers {"Content-Type"  "application/json"
+               "Authorization" (str "Bearer " token)}
+     :body    (json/write-str body)}))
+
 (defn parse-body [body]
   (json/read-str body :key-fn keyword))
