@@ -70,7 +70,6 @@
      :compiler     {:main            doit.core
                     :output-to       "resources/public/js/compiled/app.js"
                     :optimizations   :advanced
-                    :parallel-build  :true
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}
 

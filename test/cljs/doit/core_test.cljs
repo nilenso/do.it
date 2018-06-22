@@ -29,24 +29,36 @@
 
    ;; Assuming http requests made by ::get-todos, ::add-todo succeeds and
    ;; they call the corresponding success events
-   (let [backend-todos   [{:content "test todo 1" :done true :id 1}
-                          {:content "test todo 2" :done false :id 2}]
-         new-todo        {:content "new todo" :done false :id 3}
-         new-todo-done   {:content "new todo" :done true :id 3}
-         all-todos       (rf/subscribe [::subs/todos])
-         completed-todos (rf/subscribe [::subs/completed-todos])
-         remaining-todos (rf/subscribe [::subs/remaining-todos])
+   (let [backend-lists   [{:id 0 :name "default"}]
+         new-list        {:id 1 :name "new list"}
+         backend-todos   [{:content "test todo 1" :done true :id 1 :listid 0}
+                          {:content "test todo 2" :done false :id 2 :listid 0}]
+         new-todo        {:content "new todo" :done false :id 3 :listid 0}
+         new-todo-done   {:content "new todo" :done true :id 3 :listid 0}
+         todo-lists      (rf/subscribe [::subs/todo-lists])
+         all-todos       (rf/subscribe [::subs/todos 0])
+         completed-todos (rf/subscribe [::subs/completed-todos 0])
+         remaining-todos (rf/subscribe [::subs/remaining-todos 0])
          auth-token      (rf/subscribe [::subs/auth-token])]
 
      (testing "Can set auth-token in app-db"
        (rf/dispatch [::auth/save-auth-token "tkn"])
        (is (= "tkn" @auth-token)))
 
-     (testing "user can fetch todos from backend"
+     (testing "User can fetch todo-lists from backend"
+       (rf/dispatch [::events/get-todo-lists-success backend-lists])
+       (is (= backend-lists (vec @todo-lists))))
+
+     (testing "User can fetch todos from backend"
        (rf/dispatch [::events/get-todos-success backend-todos])
        (is (= backend-todos (vec @all-todos))))
 
-     (testing "user can add a new todo"
+     (testing "User can create a new todo list"
+       (rf/dispatch [::events/add-todo-list-success new-list])
+       (is (= 2 (count @todo-lists)))
+       (is (contains? (set @todo-lists) new-list)))
+
+     (testing "User can add a new todo"
        (rf/dispatch [::events/add-todo-success new-todo])
        (is (= 3 (count @all-todos)))
        (is (contains? (set @all-todos) new-todo))
@@ -76,4 +88,4 @@
      (testing "signout removes auth token and todos"
        (rf/dispatch [::auth/sign-out])
        (is (= nil @auth-token))
-       (is (= nil @all-todos))))))
+       (is (empty? @all-todos))))))

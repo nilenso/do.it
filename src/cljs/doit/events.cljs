@@ -4,10 +4,13 @@
             [day8.re-frame.http-fx]
             [ajax.core :as ajax]
             [doit.spec :as spec]
+            [doit.util :as util]
             [clojure.spec.alpha :as s]
             [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
 (def todo-url "/api/todo/")
+
+(def todo-list-url "/api/todo-list/")
 
 (def db-spec-inspector
   (let [check-db-spec (fn [context db]
@@ -33,7 +36,6 @@
   [db [_ {:keys [client-id]}]]
   (assoc db :client-id client-id))
 
-
 (defn get-client-id
   [cofx _]
   {:http-xhrio {:method          :get
@@ -44,13 +46,9 @@
                 :on-success      [::get-client-id-success]
                 :on-failure      [::request-failed]}})
 
-
 (defn get-todo-success
   [db [_ todos]]
-  (let [todo-id-map (->> (map (fn [t] [(:id t) t]) todos)
-                         (into {}))]
-    (assoc db :todos todo-id-map)))
-
+  (assoc db :todos (util/->index-by-id todos)))
 
 (defn assoc-todo-to-db
   [db [_ todo]]
@@ -122,6 +120,36 @@
         updated-todo (assoc todo :done false)]
     {:dispatch [::update-todo updated-todo]}))
 
+(defn get-todo-lists-success
+  [db [_ todo-lists]]
+  (assoc db :todo-lists (util/->index-by-id todo-lists)))
+
+(defn get-todo-lists
+  [cofx _]
+  {:http-xhrio {:method          :get
+                :uri             todo-list-url
+                :timeout         8000
+                :headers         (token-headers-map cofx)
+                :format          (ajax/json-request-format)
+                :response-format (ajax/json-response-format {:keywords? true})
+                :on-success      [::get-todo-lists-success]
+                :on-failure      [::request-failed]}})
+
+(defn add-todo-list-success
+  [db [_ todo-list]]
+  (assoc-in db [:todo-lists (:id todo-list)] todo-list))
+
+(defn add-todo-list
+  [cofx [_ vals]]
+  {:http-xhrio {:method          :post
+                :uri             todo-list-url
+                :timeout         8000
+                :params          vals
+                :headers         (token-headers-map cofx)
+                :format          (ajax/json-request-format)
+                :response-format (ajax/json-response-format {:keywords? true})
+                :on-success      [::add-todo-list-success]
+                :on-failure      [::request-failed]}})
 
 (defn registrations []
   (rf/reg-event-db
@@ -175,6 +203,7 @@
 
   (rf/reg-event-db
    ::delete-todo-success
+   [db-spec-inspector]
    delete-todo-success)
 
   (rf/reg-event-fx
@@ -182,9 +211,27 @@
    delete-todo)
 
   (rf/reg-event-db
+   ::get-todo-lists-success
+   [db-spec-inspector]
+   get-todo-lists-success)
+
+  (rf/reg-event-fx
+   ::get-todo-lists
+   get-todo-lists)
+
+  (rf/reg-event-db
+   ::add-todo-list-success
+   [db-spec-inspector]
+   add-todo-list-success)
+
+  (rf/reg-event-fx
+   ::add-todo-list
+   add-todo-list)
+
+  (rf/reg-event-db
    ::initialize-db
    (fn-traced [_ _]
-      db/default-db)))
+              db/default-db)))
 
 (defn init []
   (registrations))

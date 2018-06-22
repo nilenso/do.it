@@ -9,21 +9,26 @@
 
   (rf/reg-sub
    ::todos
+   (fn [db [_ listid]]
+     (filter #(= listid (:listid %)) (vals (:todos db)))))
+
+  (rf/reg-sub
+   ::todo-lists
    (fn [db _]
-     (vals (:todos db))))
+     (vals (:todo-lists db))))
 
   (rf/reg-sub
    ::remaining-todos
-   (fn [query-v _]
-     (rf/subscribe [::todos]))
+   (fn [[_ listid] _]
+     (rf/subscribe [::todos listid]))
 
    (fn [todos query-v _]
      (remove :done todos)))
 
   (rf/reg-sub
    ::completed-todos
-   (fn [query-v _]
-     (rf/subscribe [::todos]))
+   (fn [[_ listid] _]
+     (rf/subscribe [::todos listid]))
 
    (fn [todos query-v _]
      (filter :done todos)))

@@ -1,4 +1,5 @@
 (ns doit.db)
 
 (def default-db
-  {:todos {}})
+  {:todos      {}
+   :todo-lists {}})

@@ -11,8 +11,9 @@
 
 (defn save-auth-token
   [{:keys [db]} [_ token]]
-  {:db (assoc-in db [:user :token] token)
-   :dispatch [::events/get-todos]})
+  {:db         (assoc-in db [:user :token] token)
+   :dispatch-n [[::events/get-todo-lists]
+                [::events/get-todos]]})
 
 (defn sign-out-event
   [cofx _]
