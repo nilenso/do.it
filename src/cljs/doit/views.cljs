@@ -111,7 +111,10 @@
         (for [todo-list @todo-lists]
           ^{:key (:id todo-list)}
           [:div.list-container
-           [:h4.list-title (:name todo-list)]
+           [:div.list-container-header
+            [:h4.list-title (:name todo-list)]
+            [:i.delete-btn.far.fa-trash-alt
+             {:on-click (fn [_] (rf/dispatch [::events/delete-todo-list (:id todo-list)]))}]]
            [todos-panel (:id todo-list)]
            [add-todo (:id todo-list)]])]])))
 
