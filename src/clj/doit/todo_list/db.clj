@@ -5,8 +5,8 @@
 (defn create!
   [values]
   (first
-   (-> (jdbc/insert! (config/db) :todo_list values))))
+   (jdbc/insert! (config/db) :todo_list values)))
 
 (defn list-all
   []
-  (-> (jdbc/query (config/db) ["SELECT * FROM todo_list"])))
+  (jdbc/query (config/db) ["SELECT * FROM todo_list"]))
