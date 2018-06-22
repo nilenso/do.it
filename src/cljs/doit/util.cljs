@@ -1,5 +1,5 @@
 (ns doit.util)
 
-(defn list-map->id-map [list-map]
+(defn ->index-by-id [list-map]
   (->> (map (fn [t] [(:id t) t]) list-map)
        (into {})))

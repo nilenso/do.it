@@ -48,7 +48,7 @@
 
 (defn get-todo-success
   [db [_ todos]]
-  (assoc db :todos (util/list-map->id-map todos)))
+  (assoc db :todos (util/->index-by-id todos)))
 
 (defn assoc-todo-to-db
   [db [_ todo]]
@@ -122,7 +122,7 @@
 
 (defn get-todo-lists-success
   [db [_ todo-lists]]
-  (assoc db :todo-lists (util/list-map->id-map todo-lists)))
+  (assoc db :todo-lists (util/->index-by-id todo-lists)))
 
 (defn get-todo-lists
   [cofx _]
@@ -231,7 +231,7 @@
   (rf/reg-event-db
    ::initialize-db
    (fn-traced [_ _]
-      db/default-db)))
+              db/default-db)))
 
 (defn init []
   (registrations))
