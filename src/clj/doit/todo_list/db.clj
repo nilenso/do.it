@@ -10,3 +10,12 @@
 (defn list-all
   []
   (jdbc/query (config/db) ["SELECT * FROM todo_list"]))
+
+(defn update!
+  [todo-list]
+  (jdbc/update! (config/db) :todo_list todo-list ["id = ?" (:id todo-list)])
+  todo-list)
+
+(defn delete!
+  [id]
+  (jdbc/delete! (config/db) :todo_list ["id = ?" id]))
