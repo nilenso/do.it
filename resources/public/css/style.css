@@ -25,6 +25,11 @@ input {
     box-shadow: none;
 }
 
+button {
+    outline: none;
+    box-shadow: none;
+}
+
 .main-container {
     height: 100%;
     width: 64%;
@@ -190,12 +195,17 @@ todo panel start
 }
 
 .list-title {
-
+    height: 1rem;
     font-size: 0.75rem;
     font-weight: bold;
     color: rgba(0,16,124, 0.56);
+    background-color: inherit;
     text-transform: uppercase;
 
+}
+
+.list-title:focus {
+    opacity: 0.5;
 }
 
 .list-container-header > i {

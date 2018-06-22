@@ -102,6 +102,16 @@
         [:i {:class "fas fa-plus"}]
         "Add Todo List"]])))
 
+(defn editable-list-name [id]
+  (let [todo-list (rf/subscribe [::subs/todo-list id])]
+    (prn @todo-list)
+    (fn []
+      [:input.list-title {:type      "text"
+                          :value     (:name @todo-list)
+                          :on-change (fn [val]
+                                       (let [new-name (.-value (.-target val))]
+                                         (rf/dispatch [::events/update-todo-list (assoc @todo-list :name new-name)])))}])))
+
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
     (fn []
@@ -112,7 +122,7 @@
           ^{:key (:id todo-list)}
           [:div.list-container
            [:div.list-container-header
-            [:h4.list-title (:name todo-list)]
+            [editable-list-name (:id todo-list)]
             [:i.delete-btn.far.fa-trash-alt
              {:on-click (fn [_] (rf/dispatch [::events/delete-todo-list (:id todo-list)]))}]]
            [todos-panel (:id todo-list)]

@@ -151,6 +151,23 @@
                 :on-success      [::add-todo-list-success]
                 :on-failure      [::request-failed]}})
 
+(defn update-todo-list-success
+  [db [_ todo-list]]
+  (assoc-in db [:todo-lists (:id todo-list)] todo-list))
+
+(defn update-todo-list
+  [cofx [_ todo-list]]
+  (let [url (str todo-list-url (:id todo-list) "/")]
+    {:http-xhrio {:method          :put
+                  :uri             url
+                  :params          todo-list
+                  :timeout         8000
+                  :headers         (token-headers-map cofx)
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [::update-todo-list-success]
+                  :on-failure      [::request-failed]}}))
+
 (defn delete-todo-list-success
   [db [_ id]]
   (update-in db [:todo-lists] dissoc id))
@@ -253,6 +270,15 @@
   (rf/reg-event-fx
    ::delete-todo-list
    delete-todo-list)
+
+  (rf/reg-event-db
+   ::update-todo-list-success
+   [db-spec-inspector]
+   update-todo-list-success)
+
+  (rf/reg-event-fx
+   ::update-todo-list
+   update-todo-list)
 
   (rf/reg-event-db
    ::initialize-db
