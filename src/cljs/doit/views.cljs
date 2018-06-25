@@ -40,7 +40,6 @@
     ;; Change height of the text
     (set! (.-height (.-style parent-element)) "auto")
     (let [new-height (.-scrollHeight parent-element)]
-      (prn new-height)
       (set! (.-height (.-style parent-element)) (str new-height "px")))))
 
 (defn editable-todo [id]
@@ -104,7 +103,6 @@
 
 (defn editable-list-name [id]
   (let [todo-list (rf/subscribe [::subs/todo-list id])]
-    (prn @todo-list)
     (fn []
       [:input.list-title {:type      "text"
                           :value     (:name @todo-list)

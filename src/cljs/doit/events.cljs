@@ -29,7 +29,7 @@
     {"Authorization" (str "Bearer " token)}))
 
 (defn request-failed [db [_ err]]
-     (print "Request failed with response" err)
+  (print "Request failed with response" err)
   db)
 
 (defn get-client-id-success
@@ -170,7 +170,13 @@
 
 (defn delete-todo-list-success
   [db [_ id]]
-  (update-in db [:todo-lists] dissoc id))
+  (let [db        (update-in db [:todo-lists] #(dissoc % id))
+        old-todos (:todos db)
+        new-todos (select-keys
+                   old-todos
+                   (remove #(= (:listid (get old-todos %)) id) (keys old-todos)))
+        new-db    (assoc db :todos new-todos)]
+    new-db))
 
 (defn delete-todo-list
   [cofx [_ id]]
