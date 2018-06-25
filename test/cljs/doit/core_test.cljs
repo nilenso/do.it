@@ -17,7 +17,7 @@
   (rf/dispatch [::events/initialize-db]))
 
 (defn list-fixtures []
-  (rf/dispatch [::events/get-todo-lists-success [{:name "default list" :id 0}]]))
+  (rf/dispatch [::events/get-todo-lists-success [{:name "default list" :id 0 :archived false}]]))
 
 (deftest auth-test
   (rf-test/run-test-sync
@@ -39,9 +39,9 @@
 
    (let [listid-0      0
          listid-1      1
-         backend-lists [{:id listid-0 :name "default"}]
-         new-list      {:id listid-1 :name "new list"}
-         updated-list  {:id listid-1 :name "new updated list"}
+         backend-lists [{:id listid-0 :name "default" :archived false}]
+         new-list      {:id listid-1 :name "new list" :archived false}
+         updated-list  {:id listid-1 :name "new updated list" :archived false}
          todo-lists    (rf/subscribe [::subs/todo-lists])
          all-todos     (rf/subscribe [::subs/todos 0])]
 

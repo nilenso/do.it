@@ -126,7 +126,9 @@
            [:div.list-container-header
             [editable-list-name (:id todo-list)]
             [:i.delete-btn.far.fa-trash-alt
-             {:on-click (fn [_] (rf/dispatch [::events/delete-todo-list (:id todo-list)]))}]]
+             {:on-click (fn [_] (rf/dispatch [::events/delete-todo-list (:id todo-list)]))}]
+            [:i.fa.fa-archive
+             {:on-click (fn [_] (rf/dispatch [::events/archive-todo-list (:id todo-list)]))}]]
            [todos-panel (:id todo-list)]
            [add-todo (:id todo-list)]])]])))
 
