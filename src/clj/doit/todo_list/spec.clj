@@ -7,4 +7,6 @@
 
 (s/def ::create-params (s/keys :req-un [::name]))
 
+(s/def ::update-params (s/keys :req-un [::name ::id]))
+
 (s/def ::todo-list (s/keys :req-un [::id ::name]))

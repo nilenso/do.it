@@ -5,3 +5,7 @@
 
 (defn not-expired? [exp]
   (< (current-unix-time) exp))
+
+(defn response* [data status]
+  {:status status
+   :body   data})

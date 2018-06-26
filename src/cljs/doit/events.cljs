@@ -29,7 +29,7 @@
     {"Authorization" (str "Bearer " token)}))
 
 (defn request-failed [db [_ err]]
-     (print "Request failed with response" err)
+  (print "Request failed with response" err)
   db)
 
 (defn get-client-id-success
@@ -151,6 +151,46 @@
                 :on-success      [::add-todo-list-success]
                 :on-failure      [::request-failed]}})
 
+(defn update-todo-list-success
+  [db [_ todo-list]]
+  (assoc-in db [:todo-lists (:id todo-list)] todo-list))
+
+(defn update-todo-list
+  [cofx [_ todo-list]]
+  (let [url (str todo-list-url (:id todo-list) "/")]
+    {:http-xhrio {:method          :put
+                  :uri             url
+                  :params          todo-list
+                  :timeout         8000
+                  :headers         (token-headers-map cofx)
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [::update-todo-list-success]
+                  :on-failure      [::request-failed]}}))
+
+(defn delete-todo-list-success
+  [db [_ id]]
+  (let [db        (update-in db [:todo-lists] #(dissoc % id))
+        old-todos (:todos db)
+        new-todos (select-keys
+                   old-todos
+                   (remove #(= (:listid (get old-todos %)) id) (keys old-todos)))
+        new-db    (assoc db :todos new-todos)]
+    new-db))
+
+(defn delete-todo-list
+  [cofx [_ id]]
+  (let [url (str todo-list-url id "/")]
+    {:http-xhrio {:method          :delete
+                  :uri             url
+                  :timeout         8000
+                  :headers         (token-headers-map cofx)
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [::delete-todo-list-success id]
+                  :on-failure      [::request-failed]}}))
+
+
 (defn registrations []
   (rf/reg-event-db
    ::request-failed
@@ -227,6 +267,24 @@
   (rf/reg-event-fx
    ::add-todo-list
    add-todo-list)
+
+  (rf/reg-event-db
+   ::delete-todo-list-success
+   [db-spec-inspector]
+   delete-todo-list-success)
+
+  (rf/reg-event-fx
+   ::delete-todo-list
+   delete-todo-list)
+
+  (rf/reg-event-db
+   ::update-todo-list-success
+   [db-spec-inspector]
+   update-todo-list-success)
+
+  (rf/reg-event-fx
+   ::update-todo-list
+   update-todo-list)
 
   (rf/reg-event-db
    ::initialize-db

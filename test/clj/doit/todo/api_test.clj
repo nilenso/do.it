@@ -20,11 +20,7 @@
 
 (defn update-todo [id params token]
   (let [url (str (todo-api-end-point) id "/")]
-    (-> @(http/put
-          url
-          {:headers {"Content-Type"  "application/json"
-                     "Authorization" (str "Bearer " token)}
-           :body    (json/write-str params)})
+    (-> (test-utils/put-api-call url params token)
         (update :body test-utils/parse-body))))
 
 (defn delete-todo [id token]

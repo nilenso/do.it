@@ -25,6 +25,11 @@ input {
     box-shadow: none;
 }
 
+button {
+    outline: none;
+    box-shadow: none;
+}
+
 .main-container {
     height: 100%;
     width: 64%;
@@ -177,16 +182,40 @@ todo panel start
     padding: 1rem;
 }
 
-.list-title {
+.list-container-header {
     flex: 0;
+    border-bottom: 1px solid rgba(74,57,172, 0.15);
 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    padding-bottom: 2rem;
+
+}
+
+.list-title {
+    height: 1rem;
     font-size: 0.75rem;
     font-weight: bold;
     color: rgba(0,16,124, 0.56);
+    background-color: inherit;
     text-transform: uppercase;
 
-    border-bottom: 1px solid rgba(74,57,172, 0.15);;
 }
+
+.list-title:focus {
+    opacity: 0.5;
+}
+
+.list-container-header > i {
+    opacity:0.1;
+}
+
+.list-container-header > i:hover {
+    opacity:0.5;
+}
+
 
 .list-items {
     flex: 1;

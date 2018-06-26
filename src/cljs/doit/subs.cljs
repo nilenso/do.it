@@ -13,6 +13,11 @@
      (filter #(= listid (:listid %)) (vals (:todos db)))))
 
   (rf/reg-sub
+   ::todo-list
+   (fn [db [_ id]]
+     (get-in db [:todo-lists id])))
+
+  (rf/reg-sub
    ::todo-lists
    (fn [db _]
      (vals (:todo-lists db))))

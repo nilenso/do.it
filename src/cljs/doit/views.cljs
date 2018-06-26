@@ -40,19 +40,20 @@
     ;; Change height of the text
     (set! (.-height (.-style parent-element)) "auto")
     (let [new-height (.-scrollHeight parent-element)]
-      (prn new-height)
       (set! (.-height (.-style parent-element)) (str new-height "px")))))
 
 (defn editable-todo [id]
-  (let [todo (rf/subscribe [::subs/todo id])]
+  (let [todo    (rf/subscribe [::subs/todo id])
+        content (reagent/atom (:content @todo))]
     (fn []
       (set-todo-height id)
       [:textarea.todo {:type      "text"
                        :id        (str "todo-" id)
-                       :value     (:content @todo)
+                       :value     @content
                        :on-change (fn [val]
                                     (let [new-content (.-value (.-target val))]
-                                      (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
+                                      (reset! content new-content)))
+                       :on-blur   (fn [] (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}])))
 
 (defn remaining-todos-panel [listid]
   (let [todos (rf/subscribe [::subs/remaining-todos listid])]
@@ -102,6 +103,17 @@
         [:i {:class "fas fa-plus"}]
         "Add Todo List"]])))
 
+(defn editable-list-name [id]
+  (let [todo-list (rf/subscribe [::subs/todo-list id])
+        name      (reagent/atom (:name @todo-list))]
+    (fn []
+      [:input.list-title {:type      "text"
+                          :value     @name
+                          :on-change (fn [val]
+                                       (let [new-name (.-value (.-target val))]
+                                         (reset! name new-name)))
+                          :on-blur   (fn [] (rf/dispatch [::events/update-todo-list (assoc @todo-list :name @name)]))}])))
+
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
     (fn []
@@ -111,7 +123,10 @@
         (for [todo-list @todo-lists]
           ^{:key (:id todo-list)}
           [:div.list-container
-           [:h4.list-title (:name todo-list)]
+           [:div.list-container-header
+            [editable-list-name (:id todo-list)]
+            [:i.delete-btn.far.fa-trash-alt
+             {:on-click (fn [_] (rf/dispatch [::events/delete-todo-list (:id todo-list)]))}]]
            [todos-panel (:id todo-list)]
            [add-todo (:id todo-list)]])]])))
 
