@@ -34,3 +34,14 @@
           updated-params {:name "updated test list"}
           response       (todo-list-db/update! updated-params)]
       (is (= response (select-keys response (keys updated-params)))))))
+
+(deftest delete-todo-list-test
+  (testing "User can delete a todo-list"
+    (let [params    {:name "test list"}
+          todo-list (todo-list-db/create! params)
+          response  (todo-list-db/delete! (:id todo-list))]
+      (is (= 1 (first response)))))
+
+  (testing "Deleting a non-existent todo-list deletes nothing"
+    (let [response (todo-list-db/delete! 10)]
+      (is (= 0 (first response))))))

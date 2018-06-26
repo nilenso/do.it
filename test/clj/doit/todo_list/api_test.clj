@@ -79,7 +79,7 @@
                           todo-list-id))))))
 
 (deftest test-delete-nonexistant
-  (testing "Deleting a non existant does nothing"
+  (testing "Deleting a non existant todo-list does nothing"
     (let [token           "tk1"
           user            (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
           count-before    (count (todo-list-db/list-all))
