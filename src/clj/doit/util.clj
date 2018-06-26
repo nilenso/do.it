@@ -6,6 +6,6 @@
 (defn not-expired? [exp]
   (< (current-unix-time) exp))
 
-(defn wrap-response [data status]
+(defn response* [data status]
   {:status status
    :body   data})

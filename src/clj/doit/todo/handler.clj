@@ -10,36 +10,36 @@
   (-> params
       todo-db/add!
       (select-keys [:content :id :done :listid])
-      (util/wrap-response 201)))
+      (util/response* 201)))
 
 (defn create! [request]
   (let [body        (:body request)
         parsed-body (s/conform ::spec/create-params body)]
     (if (= parsed-body ::s/invalid)
-      (util/wrap-response {:error (s/explain-str ::spec/create-params body)} 400)
+      (util/response* {:error (s/explain-str ::spec/create-params body)} 400)
       (create* parsed-body))))
 
 (defn- update* [updated]
   (-> updated
       todo-db/update!
       (select-keys [:content :id :done :listid])
-      (util/wrap-response 200)))
+      (util/response* 200)))
 
 (defn update! [request]
   (let [body (:body request)
         id   (Integer. (get-in request [:route-params :id]))
         todo (todo-db/retrieve id)]
     (if-not todo
-      (util/wrap-response {:error (format "todo with id %s not found" id)} 404)
+      (util/response* {:error (format "todo with id %s not found" id)} 404)
       (let [parsed-body (s/conform ::spec/update-params body)]
         (if (= parsed-body ::s/invalid)
-          (util/wrap-response {:error (s/explain-str ::spec/update-params body)} 400)
+          (util/response* {:error (s/explain-str ::spec/update-params body)} 400)
           (let [updated-todo (select-keys (merge todo parsed-body) [:content :id :done :listid])]
             (update* updated-todo)))))))
 
 (defn list-all [request]
   (let [todos (todo-db/list-all)]
-    (util/wrap-response
+    (util/response*
      (map #(select-keys % [:content :id :done :listid]) todos)
      200)))
 
