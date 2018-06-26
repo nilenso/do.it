@@ -10,7 +10,7 @@
   (util/response*
    (-> params
        todo-list-db/create!
-       (select-keys [:name :id]))
+       (select-keys [:name :id :archived]))
    201))
 
 (defn create! [request]
@@ -27,7 +27,7 @@
 (defn- update* [updated]
   (-> updated
       todo-list-db/update!
-      (select-keys [:name :id])
+      (select-keys [:name :id :archived])
       (util/response* 200)))
 
 (defn update! [request]
