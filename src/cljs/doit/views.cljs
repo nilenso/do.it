@@ -43,15 +43,17 @@
       (set! (.-height (.-style parent-element)) (str new-height "px")))))
 
 (defn editable-todo [id]
-  (let [todo (rf/subscribe [::subs/todo id])]
+  (let [todo    (rf/subscribe [::subs/todo id])
+        content (reagent/atom (:content @todo))]
     (fn []
       (set-todo-height id)
       [:textarea.todo {:type      "text"
                        :id        (str "todo-" id)
-                       :value     (:content @todo)
+                       :value     @content
                        :on-change (fn [val]
                                     (let [new-content (.-value (.-target val))]
-                                      (rf/dispatch [::events/update-todo (assoc @todo :content new-content)])))}])))
+                                      (reset! content new-content)))
+                       :on-blur   (fn [] (rf/dispatch [::events/update-todo (assoc @todo :content @content)]))}])))
 
 (defn remaining-todos-panel [listid]
   (let [todos (rf/subscribe [::subs/remaining-todos listid])]
@@ -102,13 +104,15 @@
         "Add Todo List"]])))
 
 (defn editable-list-name [id]
-  (let [todo-list (rf/subscribe [::subs/todo-list id])]
+  (let [todo-list (rf/subscribe [::subs/todo-list id])
+        name      (reagent/atom (:name @todo-list))]
     (fn []
       [:input.list-title {:type      "text"
-                          :value     (:name @todo-list)
+                          :value     @name
                           :on-change (fn [val]
                                        (let [new-name (.-value (.-target val))]
-                                         (rf/dispatch [::events/update-todo-list (assoc @todo-list :name new-name)])))}])))
+                                         (reset! name new-name)))
+                          :on-blur   (fn [] (rf/dispatch [::events/update-todo-list (assoc @todo-list :name @name)]))}])))
 
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
