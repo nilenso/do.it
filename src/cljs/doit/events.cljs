@@ -218,7 +218,7 @@
   [{:keys [db]} [_ {:keys [email]}]]
    {:db db
    :flash {:type :success
-           :msg (str email " invited successfully" email)}})
+           :msg (str email " invited successfully")}})
 
 (defn invite-user
   [cofx [_ email]]
@@ -341,7 +341,7 @@
    ::archive-todo-list
    archive-todo-list)
 
-  (rf/reg-event-db
+  (rf/reg-event-fx
    ::invite-user
    invite-user)
 
