@@ -2,6 +2,7 @@
   :dependencies [[aero "1.1.3"]
                  [bidi "2.1.3"]
                  [cljsjs/google-platformjs-extern "1.0.0-0"]
+                 [cljsjs/toastr "2.1.2-0"]
                  [http-kit "2.2.0"]
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/java.jdbc "0.7.6"]

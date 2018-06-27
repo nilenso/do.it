@@ -146,6 +146,26 @@ add todo list
 
 /*
 ---------- ----- ----- ----- ----- -----
+invite user
+---------- ----- ----- ----- ----- -----
+*/
+.invite-user {
+    display: flex;
+
+    padding: 2rem;
+
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    background: rgba(0,16,124, 0.1);
+}
+
+.invite-user > * {
+    flex: 1;
+    height: 40px;
+}
+
+/*
+---------- ----- ----- ----- ----- -----
 todo panel start
 ---------- ----- ----- ----- ----- -----
 */

@@ -5,6 +5,7 @@
             [ajax.core :as ajax]
             [doit.spec :as spec]
             [doit.util :as util]
+            [cljsjs.toastr]
             [clojure.spec.alpha :as s]
             [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
@@ -28,9 +29,26 @@
   (let [token (get-in cofx [:db :user :token])]
     {"Authorization" (str "Bearer " token)}))
 
-(defn request-failed [db [_ err]]
-  (print "Request failed with response" err)
-  db)
+(defn request-failed [{:keys [db]} [_ err]]
+  (let [status (:status err)
+        body   (:body err)]
+    (if (= status 403)
+      {:dispatch [::sign-out]
+       :flash {:type :error
+               :msg "Session expired or user not invited"}}
+      {:db    db
+       :flash {:type :error
+               :msg  (str "Request failed with response" body)}})))
+
+(defn sign-out-event
+  [cofx _]
+  {:dispatch [::initialize-db]})
+
+(defn save-auth-token
+  [{:keys [db]} [_ token]]
+  {:db         (assoc-in db [:user :token] token)
+   :dispatch-n [[::get-todo-lists]
+                [::get-todos]]})
 
 (defn get-client-id-success
   [db [_ {:keys [client-id]}]]
@@ -196,11 +214,38 @@
                   :on-success      [::delete-todo-list-success id]
                   :on-failure      [::request-failed]}}))
 
+(defn invite-user-success
+  [{:keys [db]} [_ {:keys [email]}]]
+   {:db db
+   :flash {:type :success
+           :msg (str email " invited successfully" email)}})
+
+(defn invite-user
+  [cofx [_ email]]
+  (let [url "/api/auth/invite-user/"]
+    {:http-xhrio {:method          :post
+                  :uri             url
+                  :timeout         8000
+                  :headers         (token-headers-map cofx)
+                  :params          {:email email}
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [::invite-user-success]
+                  :on-failure      [::request-failed]}}))
+
 
 (defn registrations []
-  (rf/reg-event-db
+
+  (rf/reg-event-fx
+   ::save-auth-token
+   save-auth-token)
+
+  (rf/reg-event-fx
+   ::sign-out
+   sign-out-event)
+
+  (rf/reg-event-fx
    ::request-failed
-   [db-spec-inspector]
    request-failed)
 
   (rf/reg-event-db
@@ -297,9 +342,33 @@
    archive-todo-list)
 
   (rf/reg-event-db
+   ::invite-user
+   invite-user)
+
+  (rf/reg-event-fx
+   ::invite-user-success
+   invite-user-success)
+
+  (rf/reg-event-db
    ::initialize-db
    (fn-traced [_ _]
-              db/default-db)))
+              db/default-db))
+
+  (rf/reg-fx
+   :flash
+   (fn [{:keys [type msg]}]
+     (condp = type
+       :success (.success js/toastr msg)
+       :error   (.error js/toastr msg)))))
+
+(defn toastr-init []
+  (let [options {
+                 :positionClass     "toast-top-center"
+                 :showDuration      "300"
+                 :hideDuration      "1000"
+                 :timeOut           "2000"}]
+    (aset js/toastr "options" (clj->js options))))
 
 (defn init []
+  (toastr-init)
   (registrations))
