@@ -24,6 +24,12 @@
           (config/db)
           ["SELECT * FROM app_user WHERE email = ?" email])))
 
+(defn get-by-id
+  [id]
+  (first (jdbc/query
+          (config/db)
+          ["SElECT * FROM app_user WHERE id = ?" id])))
+
 (defn create-or-update!
   [values]
   (if-let [{:keys [id]} (get-by-email (:email values))]

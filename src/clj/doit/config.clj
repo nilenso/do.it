@@ -19,3 +19,7 @@
 
 (defn google-client-id []
   (get @config :google-client-id))
+
+(defn mailgun-cred []
+  {:key    (get-in @config [:mailgun :key])
+   :domain (get-in @config [:mailgun :domain])})
