@@ -53,7 +53,7 @@
         create-response-2 (create! create-params-2 token)]
     (is (= 201 (:status create-response-1)))
     (is (= 201 (:status create-response-2)))
-    (is (= (set (keys (:body create-response-1))) #{:name :id}))
+    (is (= (set (keys (:body create-response-1))) #{:name :id :archived}))
     (is (= (get-in create-response-1 [:body :name]) (:name create-params-1)))))
 
 (deftest test-update
@@ -61,10 +61,10 @@
     (let [token         "tk1"
           user          (user-db/create! {:email "test@nilenso.com" :token token :token_exp (+ 100 (util/current-unix-time))})
           todo-list     (todo-list-db/create! {:name "test list 1"})
-          update-params {:name "updated test list" :id (:id todo-list)}
+          update-params {:name "updated test list" :id (:id todo-list) :archived true}
           response      (update! (:id todo-list) update-params token)]
       (is (= 200 (:status response)))
-      (is (= #{:name :id} (set (keys (:body response)))))
+      (is (= #{:name :id :archived} (set (keys (:body response)))))
       (is (= (:name update-params) (get-in response [:body :name]))))))
 
 (deftest test-delete

@@ -17,7 +17,9 @@
 ;; -- TODO LISTS --
 (s/def ::name string?)
 
-(s/def ::todo-list (s/keys :req-un [::id ::name]))
+(s/def ::archived boolean?)
+
+(s/def ::todo-list (s/keys :req-un [::id ::name ::archived]))
 
 (s/def ::todo-lists (s/map-of ::id ::todo-list))
 

@@ -168,6 +168,12 @@
                   :on-success      [::update-todo-list-success]
                   :on-failure      [::request-failed]}}))
 
+(defn archive-todo-list
+  [{:keys [db]} [_ id]]
+  (let [todo-list     (get-in db [:todo-lists id])
+        archived-list (assoc todo-list :archived true)]
+    {:dispatch [::update-todo-list archived-list]}))
+
 (defn delete-todo-list-success
   [db [_ id]]
   (let [db        (update-in db [:todo-lists] #(dissoc % id))
@@ -285,6 +291,10 @@
   (rf/reg-event-fx
    ::update-todo-list
    update-todo-list)
+
+  (rf/reg-event-fx
+   ::archive-todo-list
+   archive-todo-list)
 
   (rf/reg-event-db
    ::initialize-db

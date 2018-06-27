@@ -20,7 +20,7 @@
   (rf/reg-sub
    ::todo-lists
    (fn [db _]
-     (vals (:todo-lists db))))
+     (remove :archived (vals (:todo-lists db)))))
 
   (rf/reg-sub
    ::remaining-todos

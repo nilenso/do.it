@@ -5,8 +5,10 @@
 
 (s/def ::name string?)
 
+(s/def ::archived boolean?)
+
 (s/def ::create-params (s/keys :req-un [::name]))
 
-(s/def ::update-params (s/keys :req-un [::name ::id]))
+(s/def ::update-params (s/keys :req-un [::name ::id ::archived]))
 
-(s/def ::todo-list (s/keys :req-un [::id ::name]))
+(s/def ::todo-list (s/keys :req-un [::id ::name ::archived]))
