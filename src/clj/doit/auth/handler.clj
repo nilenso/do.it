@@ -19,3 +19,10 @@
         invited-by (:email (user-db/get-by-id user-id))
         email      (get-in request [:body :email])]
     (util/response* {:email (auth/invite-user! email invited-by)} 200)))
+
+(defn verify-token [request]
+  (let [token  (get-in request [:body :token])
+        valid? (auth/verify-token token)]
+    (if valid?
+      {:status 200}
+      {:status 403})))

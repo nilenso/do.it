@@ -40,7 +40,20 @@
        :flash {:type :error
                :msg  (str "Request failed with response" body)}})))
 
-(defn sign-out-event
+(defn sign-in
+  [cofx [_ token]]
+  (let [url "/api/auth/verify-token/"]
+    {:http-xhrio {:method          :post
+                  :uri             url
+                  :timeout         8000
+                  :headers         (token-headers-map cofx)
+                  :params          {:token token}
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [::save-auth-token token]
+                  :on-failure      [::request-failed]}}))
+
+(defn sign-out
   [cofx _]
   {:dispatch [::initialize-db]})
 
@@ -237,12 +250,16 @@
 (defn registrations []
 
   (rf/reg-event-fx
+   ::sign-in
+   sign-in)
+
+  (rf/reg-event-fx
    ::save-auth-token
    save-auth-token)
 
   (rf/reg-event-fx
    ::sign-out
-   sign-out-event)
+   sign-out)
 
   (rf/reg-event-fx
    ::request-failed

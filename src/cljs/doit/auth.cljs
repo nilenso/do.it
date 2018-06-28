@@ -11,8 +11,7 @@
 
 (defn sign-in-success [gapi-user]
   (let [token (.-id_token (.getAuthResponse gapi-user))]
-    (rf/dispatch [::events/save-auth-token token])
-    (prn "sign in success")))
+    (rf/dispatch [::events/sign-in token])))
 
 (defn sign-in-failure []
   (prn "sign in failed"))
