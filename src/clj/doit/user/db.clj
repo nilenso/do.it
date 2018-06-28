@@ -8,9 +8,10 @@
 
 (defn update!
   [user]
-  (jdbc/update! (config/db) :app_user user ["id = ?" (:id user)] {:return-keys true})
-  ;; XXX: This will fail silently if there is something wrong with the map user
-  user)
+  (condp #(contains? %2 %1) user
+    :id    (jdbc/update! (config/db) :app_user user ["id = ?" (:id user)] {:return-keys true})
+    :email (jdbc/update! (config/db) :app_user user ["email = ?" (:email user)] {:return-keys true})
+    nil))
 
 (defn get-by-token
   [token]
