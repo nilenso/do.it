@@ -3,21 +3,24 @@
 
  :webserver
  {:port #profile {:default 4000
-                  :test 4001
-                  :prod #long #or [#env HTTP_PORT 4000]}
+                  :test    4001
+                  :prod    #long #or [#env HTTP_PORT 4000]}
   :host #profile {:default "localhost"
-                  :prod #ref [:secrets :host]}}
+                  :prod    #ref [:secrets :host]}}
+ :mailgun
+ {:key    #ref [:secrets :mailgun :key]
+  :domain #ref [:secrets :mailgun :domain]}
  :google-client-id #ref [:secrets :google-client-id]
  :db
- {:dbname #profile {:default "doit"
-                    :test "doit_test"
-                    :prod #ref [:secrets :db :name]}
-  :dbtype "postgresql"
-  :host #profile {:default "localhost"
-                  :prod #ref [:secrets :db :host]}
-  :port #profile {:default 5432
-                  :prod #or [#ref [:secrets :db :port] 5432]}
-  :user #profile {:default #env USER
-                  :prod #ref [:secrets :db :user]}
+ {:dbname   #profile {:default "doit"
+                      :test    "doit_test"
+                      :prod    #ref [:secrets :db :name]}
+  :dbtype   "postgresql"
+  :host     #profile {:default "localhost"
+                      :prod    #ref [:secrets :db :host]}
+  :port     #profile {:default 5432
+                      :prod    #or [#ref [:secrets :db :port] 5432]}
+  :user     #profile {:default #env USER
+                      :prod    #ref [:secrets :db :user]}
   :password #profile {:default ""
-                      :prod #ref [:secrets :db :password]}}}
+                      :prod    #ref [:secrets :db :password]}}}

@@ -2,6 +2,7 @@
   :dependencies [[aero "1.1.3"]
                  [bidi "2.1.3"]
                  [cljsjs/google-platformjs-extern "1.0.0-0"]
+                 [cljsjs/toastr "2.1.2-0"]
                  [http-kit "2.2.0"]
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/java.jdbc "0.7.6"]
@@ -11,6 +12,7 @@
                  [ragtime "0.7.2"]
                  [re-frame "0.10.5"]
                  [reagent "0.7.0"]
+                 [nilenso/mailgun "0.2.3"]
                  [day8.re-frame/test "0.1.5"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]

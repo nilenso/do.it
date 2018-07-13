@@ -12,7 +12,6 @@
 (defn base-fixtures []
   (events/registrations)
   (subs/registrations)
-  (auth/registrations)
 
   (rf/dispatch [::events/initialize-db]))
 
@@ -25,11 +24,11 @@
 
    (let [auth-token (rf/subscribe [::subs/auth-token])]
      (testing "Can set auth-token in app-db"
-       (rf/dispatch [::auth/save-auth-token "tkn"])
+       (rf/dispatch [::events/save-auth-token "tkn"])
        (is (= "tkn" @auth-token)))
 
      (testing "signout removes auth token and todos"
-       (rf/dispatch [::auth/sign-out])
+       (rf/dispatch [::events/sign-out])
        (is (= nil @auth-token))))))
 
 

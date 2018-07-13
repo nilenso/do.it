@@ -114,6 +114,22 @@
                                          (reset! name new-name)))
                           :on-blur   (fn [] (rf/dispatch [::events/update-todo-list (assoc @todo-list :name @name)]))}])))
 
+
+(defn invite-user-panel []
+  (let [email (reagent/atom "")]
+    (fn []
+      [:div.invite-user.add-object
+       [:input {:type        "text"
+                :placeholder "name@example.com"
+                :value       @email
+                :on-change   (fn [val]
+                               (reset! email (.-value (.-target val))))}]
+       [:button {:type     "input"
+                 :on-click (fn [args]
+                             (rf/dispatch [::events/invite-user @email])
+                             (reset! email ""))}
+        [:i {:class "fas fa-plus"}] " Invite User"]])))
+
 (defn lists-panel []
   (let [todo-lists (rf/subscribe [::subs/todo-lists])]
     (fn []
@@ -130,7 +146,8 @@
             [:i.fa.fa-archive
              {:on-click (fn [_] (rf/dispatch [::events/archive-todo-list (:id todo-list)]))}]]
            [todos-panel (:id todo-list)]
-           [add-todo (:id todo-list)]])]])))
+           [add-todo (:id todo-list)]])]
+       [invite-user-panel]])))
 
 (defn sign-in-panel []
   [:div.sign-in-panel
